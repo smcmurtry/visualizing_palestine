@@ -1,17 +1,10 @@
-
-.container {
-  width: 890px;
-}
-
 #graphic {
   padding-top: 60px;
 }
 
-
 #sections {
   position: relative;
   display: inline-block;
-  width: 250px;
   top: 0px;
   z-index: 90;
   padding-bottom: 200px;
@@ -38,31 +31,33 @@
   height: 300px;
 }
 
-#vis {
+#map {
+  display: inline-block;
+  position: fixed;
+  top: 60px;
+  z-index: 1;
+  /*margin-left: 100px;*/
+}
+
+/*#map .title {
+  font-size:120px;
+  text-anchor: middle;
+}
+
+#map .sub-title {
+  font-size:80px;
+  text-anchor: middle;
+}*/
+
+#vote {
   display: inline-block;
   position: fixed;
   top: 60px;
   z-index: 1;
   margin-left: 0;
-  /* height: 600px; */
-  /* width: 600px; */
-  /* background-color: #ddd; */
+  color: white;
+  font-size: 20px;
+  text-align: center;
+  background-color: black;
+  padding: 10px;
 }
-
-#vis .title {
-  font-size:120px;
-  text-anchor: middle;
-}
-
-#vis .sub-title {
-  font-size:80px;
-  text-anchor: middle;
-}
-
-
-.highlight {
-  fill: #008080;
-  font-weight: bold;
-}
-
-
