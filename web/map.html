@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.19/topojson.min.js"></script>
+  <script src="queue.js"></script>
+  <title>The Israeli ID System - Interactive</title>
+  <meta name="description" content="The Israeli ID System - Interactive">
+</head>
+<body></body>
+<script>
+
+
+var data_path = "../data/";
+
+var width = 500;
+var height = 500;
+var feature;
+var path = d3.geo.path().projection(null);
+var colours = ['green', 'red', 'orange', 'lightblue', 'grey'];
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .append("g");
+
+queue()
+  .defer(d3.json, data_path + "background.json")
+  .defer(d3.json, data_path + "water.json")
+  .defer(d3.json, data_path + "map_1.json")
+  .defer(d3.json, data_path + "map_2.json")
+  .defer(d3.json, data_path + "map_3.json")
+  .defer(d3.json, data_path + "map_4.json")
+  .defer(d3.json, data_path + "map_5.json")
+  .await(ready);
+
+function ready(error, background, water, map_1, map_2, map_3, map_4, map_5) {
+  if (error) throw error;
+  var _background = topojson.feature(background, background.objects.background);
+  var _water = topojson.feature(water, water.objects.water);
+
+  var maps = [];
+  var map_vars = [map_1, map_2, map_3, map_4, map_5];
+  var map_fnames = ['map_1', 'map_2', 'map_3', 'map_4', 'map_5'];
+  for (var i = 0; i < map_vars.length; i++) {
+    var _map = topojson.feature(map_vars[i], map_vars[i].objects[map_fnames[i]]);
+    maps.push(_map)
+  };
+
+  svg.append("g")
+    .selectAll("path")
+      .data(_background.features)
+    .enter().append("path")
+      .attr("class", "riding")
+      .attr("d", path)
+      .attr("fill", 'black');
+
+  svg.append("g")
+    .selectAll("path")
+      .data(_water.features)
+    .enter().append("path")
+      .attr("class", "riding")
+      .attr("d", path)
+      .attr("fill", 'blue');
+
+  for (var i = 0; i < maps.length; i++) {
+    svg.append("g")
+    .selectAll("path")
+      .data(maps[i].features)
+    .enter().append("path")
+      .attr("class", "riding")
+      .attr("d", path)
+      .attr("fill", colours[i])
+  };
+  initialize_zoom();
+
+  function initialize_zoom() {
+    var b = path.bounds(_background),
+        s = .95 / Math.max((b[1][0] - b[0][0]) / width, (b[1][1] - b[0][1]) / height),
+        t = [(width - s * (b[1][0] + b[0][0])) / 2, (height - s * (b[1][1] + b[0][1]))/2 ];
+
+    svg.attr("transform", "translate(" + t + ")scale(" + s + ")");
+  }
+
+}
+
+</script>
