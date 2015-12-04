@@ -1,9 +1,45 @@
 @font-face { font-family: Effra_Std_Md; src: url('../data/Effra-Font/Effra_Std_Md.ttf'); }
 @font-face { font-family: Effra_Std_Rg; src: url('../data/Effra-Font/Effra_Std_Rg.ttf'); }
 @font-face { font-family: Effra_Std_Bd; src: url('../data/Effra-Font/Effra_Std_Bd.ttf'); }
+@font-face { font-family: Effra_Std_He; src: url('../data/Effra-Font/Effra_Std_He.ttf'); }
 
 body {
   font-family: Effra_Std_Rg, sans-serif;
+  /*text-align: center;*/
+}
+
+.all {
+  width: 850px;
+  margin: 0 auto;
+}
+
+.h1, .h2 {
+  font-family: Effra_Std_He, sans-serif;
+  width: 850px;
+  text-align: justify;
+}
+
+.h1 {
+  color: #79C0C4;
+  font-size: 108px;
+}
+
+.h2 {
+  color: #38383A;
+  font-size: 77px;
+}
+
+.left, .right {
+  width: 49%;
+  font-family: Effra_Std_Bd, sans-serif;
+  text-align: justify;
+}
+
+.left {
+  float: left;
+}
+.right {
+  float: right;
 }
 
 #graphic {
@@ -65,8 +101,8 @@ body {
   margin-left: 0;
   color: white;
   font-size: 20px;
-  text-align: center;
-  background-color: black;
+  /*text-align: center;*/
+  /*background-color: black;*/
   padding: 10px;
 }
 

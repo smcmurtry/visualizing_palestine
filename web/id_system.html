@@ -13,47 +13,46 @@
 </head>
 
 <body>
+
+  <div class='all'>
+  <div class='h1'>IDENTITY CRISIS</div>
+  <div class='h2'>THE ISRAELI ID SYSTEM</div>
+  <div class='left'>
+    SINCE 1967, THE ISRAELI GOVERNMENT HAS BEEN THE DE-FACTO SOVEREIGN POWER IN CONTROL OF THE WHOLE OF HISTORIC PALESTINE, INCLUDING GAZA, THE WEST BANK, AND ISRAEL.
+  </div>
+  <div class='right'> ISRAELI AUTHORITIES CONTROL THE POPULATION REGISTRY AND ID SYSTEM, RESTRICTING WHERE PALESTINIANS CAN LIVE, THEIR ACCESS TO SERVICES AND THEIR PARTICIPATION IN THE POLITICAL SYSTEM.
+  </div>
 <div class="container">
-<!--   <h1>Identity Crisis</h1>
-  <h2>The Israeli ID System</h2>
-  <div>
-    Since 1967, the Israeli Government has been the de-facto sovereign power in control of the whole of historic Palestine, including Gaza, the West Bank, and Israel. Israeli authorities control the population registry and ID system, restricting where Palestinians can live, their access to services and their participation in the political system.
-  </div> -->
   <div id='graphic'>
     <div id='sections'>
       <section class="step">
-        <!-- <div class="title">Jewish Israeli Citizens</div> -->
+        .
+      </section>
+      <section class="step">
         <span class='bold'>Free</span> to live throughout Israel and 60% of the occupied West Bank.
       </section>
       <section class="step">
-        <!-- <div class="title">Palestinian Citizens of Israel</div> -->
         <span class='bold'>Barred</span> from living in <span class='bold'>68%</span>  of all towns in Israel by admissions committees.
       </section>
       <section class="step">
-        <!-- <div class="title">East Jerusalem Palestinians</div> -->
         Access to most areas, but <span class='bold'>ID may be revoked</span> if living outside of Jerusalem.
       </section>
       <section class="step">
-        <!-- <div class="title">West Bank Palestinians</div> -->
         <span class='bold'>Barred</span> from living in all but <span class='bold'>40%</span>  of West Bank due to Israeli settler and military presence.
       </section>
       <section class="step">
-        <!-- <div class="title">Gaza Strip Palestinians</div> -->
         <span class='bold'>Barred</span> from living outside of Gaza since 2007.
       </section>
       <section class="step">
-        <!-- <div class="title">Palestinian Exiles</div> -->
         <span class='bold'>Barred</span> from returning to live anywhere in Israel or Palestinian territory.
       </section>
     </div>
     <div id='vote'></div>
     <div id='map'></div>
-    <div class='id-card-div'>
-      <!-- <svg class='id-card'></svg> -->
-    </div>
-    <div id="extra-space">
-    </div>
+    <div class='id-card-div'></div>
+    <div id="extra-space"></div>
   </div>
+</div>
 </div>
 </body>
 
@@ -73,7 +72,6 @@ var vote_width = 100,
     maps = [];
 
 var path = d3.geo.path().projection(null);
-// var colours = ['green', 'red', 'orange', 'lightblue', 'grey'];
 
 var colours = ['#3E8FAD', '#4CADCE', '#6DCFF6', '#83C774', '#74AD69', '#949599'];
 
@@ -83,10 +81,10 @@ var group_text = ['JEWISH ISRAELI CITIZENS', 'PALESTINIAN CITIZENS OF ISRAEL',
 
 var pop_text = ['5.9M', '1.3M', '0.3M', '2.3M', '1.6M', '5.7M'];
 
-
 d3.select('#vote')
   .style('width', vote_width + 'px')
-  .style('height', vote_height + 'px');
+  .style('height', vote_height + 'px')
+  .style('top', (0.4*height) + 'px');
 
 d3.select('.container').style('width', total_width + 'px');
 
@@ -98,7 +96,8 @@ d3.select("#map")
   .style('margin-left', vote_width + 'px');
 
 d3.select(".id-card-div")
-  .style('margin-left', (vote_width + map_width) + 'px');
+  .style('margin-left', (vote_width + map_width) + 'px')
+  .style('top', (0.4*height) + 'px');
 
 var svg = d3.select("#map").append("svg")
     .attr("width", map_width)
@@ -168,15 +167,30 @@ function ready(error, background, water, map_1, map_2, map_3, map_4, map_5) {
       activeIndex = index;
       var sign = (activeIndex - lastIndex) < 0 ? -1 : 1;
       var scrolledSections = d3.range(lastIndex + sign, activeIndex + sign, sign);
-      scrolledSections.forEach(function(i) {
+      scrolledSections.forEach(function(j) {
+        var i = j - 1;
         console.log(i)
         // this is the function called when section i scrolls into focus
-        d3.select('.access-layer')
-          .remove();
 
-        create_id_cards(card_width, colours[i], group_text[i], pop_text[i]);
+        if (i == -1) {
+          d3.select('#map').style('display', 'none');
+          d3.select('#vote').style('display', 'none');
+          d3.select('.id-card-div').style('display', 'none');
+        }
 
-        if (i != 5) {
+        if (i > -1) {
+          d3.select('#map').style('display', 'block');
+          d3.select('#vote').style('display', 'block');
+          d3.select('.id-card-div').style('display', 'block');
+
+
+          d3.select('.access-layer')
+            .remove();
+
+          create_id_cards(card_width, colours[i], group_text[i], pop_text[i]);
+        }
+
+        if (i > -1 && i < 5) {
           svg.append("g")
             .attr('class', 'access-layer')
             .selectAll("path")
@@ -184,14 +198,15 @@ function ready(error, background, water, map_1, map_2, map_3, map_4, map_5) {
             .enter().append("path")
               .attr("class", "riding")
               .attr("d", path)
-              .attr("fill", '#83C774')
+              .attr("fill", colours[i])
         }
 
-        if (i < 2) {
+        if (-1 < i < 2) {
           d3.select('#vote')// .inner')
-            .style('color', 'green')
+            .style('color', 'black')
             .html('Can <br> Vote in Israeli Parliament')
-        } else {
+        } 
+        if (i >= 2) {
           d3.select('#vote')// .inner')
             .style('color', 'red')
             .html('Cannot <br> Vote in Israeli Parliament')
