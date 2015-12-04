@@ -1,3 +1,11 @@
+@font-face { font-family: Effra_Std_Md; src: url('../data/Effra-Font/Effra_Std_Md.ttf'); }
+@font-face { font-family: Effra_Std_Rg; src: url('../data/Effra-Font/Effra_Std_Rg.ttf'); }
+@font-face { font-family: Effra_Std_Bd; src: url('../data/Effra-Font/Effra_Std_Bd.ttf'); }
+
+body {
+  font-family: Effra_Std_Rg, sans-serif;
+}
+
 #graphic {
   padding-top: 60px;
 }
@@ -12,14 +20,14 @@
 
 .step {
   margin-bottom: 200px;
-  font-family: "TiemposTextWeb-Regular","Georgia";
+  font-family: Effra_Std_Rg, sans-serif;
   font-size: 16px;
   line-height: 23px;
   color: #767678;
 }
 
 #sections .title {
-  font-family: Arial,Helvetica,"san-serif";
+  font-family: Effra_Std_Rg, sans-serif;
   font-size: 16px;
   font-weight: bold;
   margin-bottom: 2px;
@@ -31,12 +39,16 @@
   height: 300px;
 }
 
-#map {
+#map, #vote, .id-card-div {
   display: inline-block;
   position: fixed;
   top: 60px;
   z-index: 1;
   /*margin-left: 100px;*/
+}
+
+.bold {
+  font-family: Effra_Std_Bd, sans-serif;
 }
 
 /*#map .title {
@@ -50,14 +62,27 @@
 }*/
 
 #vote {
-  display: inline-block;
-  position: fixed;
-  top: 60px;
-  z-index: 1;
   margin-left: 0;
   color: white;
   font-size: 20px;
   text-align: center;
   background-color: black;
   padding: 10px;
+}
+
+.photo {
+  fill: #FFFDFF;
+}
+
+.id-text, .id-pop {
+  color: #FFFDFF;
+  position: absolute;
+}
+
+.id-text {
+  font-family: Effra_Std_Rg, sans-serif;
+}
+
+.id-pop {
+  font-family: Effra_Std_Md, sans-serif;
 }
