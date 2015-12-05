@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.js"></script>
+</head>
+<style>
+
+@font-face { font-family: Effra_Std_Rg; src: url('../data/Effra-Font/Effra_Std_Rg.ttf'); }
+
+.vote-box-div {
+  text-align: center;
+  width: 100px;
+  margin-top: 100px;
+  margin-left: 100px;
+}
+
+.vote-box {
+  background-color: #6D6E72;
+  width: 100px;
+  height: 70px;
+  font-family: Effra_Std_Rg, sans-serif;
+  color: white;
+  text-align: center;
+  padding-top: 30px;
+  font-size: 30px;
+}
+
+.ballot {
+  width: 60px;
+  height: 30px;
+  background-color: white;
+  border-width: 2px 2px 0px 2px;
+  border-style: solid;
+  border-color: #6D6E72;
+  margin: 0 auto;
+}
+
+.cross {
+  font-family: sans-serif;
+  color: red;
+  font-size: 300px;
+  position: absolute;
+  opacity: 0.7;
+}
+
+</style>
+
+<body>
+
+<div class='vote-box-div'>
+  <div class='ballot'></div>
+  <div class='vote-box'>VOTE</div>
+  <div class='cross'>x</div>
+</div>
+</body>
+<script>
+
+var margin_top = +d3.select('.vote-box-div').style('margin-top').slice(0, -2),
+    margin_left = +d3.select('.vote-box-div').style('margin-left').slice(0, -2);
+
+d3.select('.cross')
+  .style('top', (margin_top-130) + 'px')
+  .style('left', (margin_left-16) + 'px');
+
+// d3.select('.cross').style('display', 'none');
+d3.select('.cross').style('display', 'block');
+
+</script>

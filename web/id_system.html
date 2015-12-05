@@ -17,11 +17,26 @@
   <div class='all'>
   <div class='h1'>IDENTITY CRISIS</div>
   <div class='h2'>THE ISRAELI ID SYSTEM</div>
+  <div class='intro-text'>
   <div class='left'>
     SINCE 1967, THE ISRAELI GOVERNMENT HAS BEEN THE DE-FACTO SOVEREIGN POWER IN CONTROL OF THE WHOLE OF HISTORIC PALESTINE, INCLUDING GAZA, THE WEST BANK, AND ISRAEL.
   </div>
   <div class='right'> ISRAELI AUTHORITIES CONTROL THE POPULATION REGISTRY AND ID SYSTEM, RESTRICTING WHERE PALESTINIANS CAN LIVE, THEIR ACCESS TO SERVICES AND THEIR PARTICIPATION IN THE POLITICAL SYSTEM.
   </div>
+  </div>
+  <div class='legend'>
+
+    <div class='legend-entry left'>
+      <div class='can-live-rect'></div>
+      <div class='legend-text'>WHERE YOU CAN LIVE</div>
+  </div>
+
+    <div class='legend-entry right'>
+      <div class='cant-live-rect'></div>
+      <div class='legend-text'>WHERE YOU CAN'T LIVE</div>
+  </div>
+
+</div>
 <div class="container">
   <div id='graphic'>
     <div id='sections'>
@@ -66,7 +81,7 @@ var vote_width = 100,
     map_width = 300,
     card_width = 200,
     text_width = 250,
-    text_margin = 10,
+    text_margin = 20,
     total_width = vote_width + map_width + card_width + text_width,
     height = 700,
     maps = [];
@@ -176,9 +191,11 @@ function ready(error, background, water, map_1, map_2, map_3, map_4, map_5) {
           d3.select('#map').style('display', 'none');
           d3.select('#vote').style('display', 'none');
           d3.select('.id-card-div').style('display', 'none');
+          d3.select('.legend').style('display', 'none');
         }
 
         if (i > -1) {
+          d3.select('.legend').style('display', 'block');
           d3.select('#map').style('display', 'block');
           d3.select('#vote').style('display', 'block');
           d3.select('.id-card-div').style('display', 'block');
@@ -188,6 +205,9 @@ function ready(error, background, water, map_1, map_2, map_3, map_4, map_5) {
             .remove();
 
           create_id_cards(card_width, colours[i], group_text[i], pop_text[i]);
+
+          d3.select('.can-live-rect')
+            .style('background-color', colours[i]);
         }
 
         if (i > -1 && i < 5) {
@@ -209,7 +229,7 @@ function ready(error, background, water, map_1, map_2, map_3, map_4, map_5) {
         if (i >= 2) {
           d3.select('#vote')// .inner')
             .style('color', 'red')
-            .html('Cannot <br> Vote in Israeli Parliament')
+            .html("Can't <br> Vote in Israeli Parliament")
         }
       });
       lastIndex = activeIndex;
