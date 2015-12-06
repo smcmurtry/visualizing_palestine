@@ -5,7 +5,6 @@
 
 body {
   font-family: Effra_Std_Rg, sans-serif;
-  /*text-align: center;*/
 }
 
 .all {
@@ -113,7 +112,7 @@ body {
   height: 300px;
 }
 
-#map, #vote, .id-card-div {
+#map, .id-card-div, .vote-box-div {
   display: inline-block;
   position: fixed;
   top: 60px;
@@ -123,25 +122,6 @@ body {
 
 .bold {
   font-family: Effra_Std_Bd, sans-serif;
-}
-
-/*#map .title {
-  font-size:120px;
-  text-anchor: middle;
-}
-
-#map .sub-title {
-  font-size:80px;
-  text-anchor: middle;
-}*/
-
-#vote {
-  margin-left: 0;
-  color: white;
-  font-size: 20px;
-  /*text-align: center;*/
-  /*background-color: black;*/
-  padding: 10px;
 }
 
 .photo {
@@ -166,4 +146,41 @@ body {
   color: #FFFDFF;
   position: absolute;
   text-align: center;
+}
+
+.vote-box-div {
+  text-align: center;
+  width: 100px;
+  margin-top: 230px;
+  margin-left: 0px;
+  display: none;
+}
+
+.vote-box {
+  background-color: #6D6E72;
+  width: 100px;
+  height: 70px;
+  font-family: Effra_Std_Rg, sans-serif;
+  color: white;
+  text-align: center;
+  padding-top: 30px;
+  font-size: 30px;
+}
+
+.ballot {
+  width: 60px;
+  height: 30px;
+  background-color: white;
+  border-width: 2px 2px 0px 2px;
+  border-style: solid;
+  border-color: #6D6E72;
+  margin: 0 auto;
+}
+
+.cross {
+  font-family: sans-serif;
+  color: red;
+  font-size: 300px;
+  position: absolute;
+  opacity: 0.9;
 }

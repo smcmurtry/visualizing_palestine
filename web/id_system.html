@@ -8,11 +8,9 @@
   <title>The Israeli ID System - Interactive</title>
   <meta name="description" content="The Israeli ID System - Interactive">
   <link rel="stylesheet" type="text/css" href="scroller.css"/>
-
 </head>
 
 <body>
-
   <div class='all'>
   <div class='h1'>IDENTITY CRISIS</div>
   <div class='h2'>THE ISRAELI ID SYSTEM</div>
@@ -25,52 +23,50 @@
   </div>
   <div id='pop_registry'></div>
   <div class='legend'>
-
     <div class='legend-entry left'>
       <div class='can-live-rect'></div>
       <div class='legend-text'>WHERE YOU CAN LIVE</div>
-  </div>
-
+    </div>
     <div class='legend-entry right'>
       <div class='cant-live-rect'></div>
       <div class='legend-text'>WHERE YOU CAN'T LIVE</div>
-  </div>
-
-</div>
-<div class="container">
-  <div id='graphic'>
-    <div id='sections'>
-      <section class="step">
-        .
-      </section>
-      <section class="step">
-        <span class='bold'>Free</span> to live throughout Israel and 60% of the occupied West Bank.
-      </section>
-      <section class="step">
-        <span class='bold'>Barred</span> from living in <span class='bold'>68%</span>  of all towns in Israel by admissions committees.
-      </section>
-      <section class="step">
-        Access to most areas, but <span class='bold'>ID may be revoked</span> if living outside of Jerusalem.
-      </section>
-      <section class="step">
-        <span class='bold'>Barred</span> from living in all but <span class='bold'>40%</span>  of West Bank due to Israeli settler and military presence.
-      </section>
-      <section class="step">
-        <span class='bold'>Barred</span> from living outside of Gaza since 2007.
-      </section>
-      <section class="step">
-        <span class='bold'>Barred</span> from returning to live anywhere in Israel or Palestinian territory.
-      </section>
     </div>
-    <div id='vote'></div>
-    <div id='map'></div>
-    <div class='id-card-div'></div>
-    <div id="extra-space"></div>
   </div>
-</div>
+  <div class="container">
+    <div id='graphic'>
+      <div id='sections'>
+        <section class="step">.</section>
+        <section class="step">
+          <span class='bold'>Free</span> to live throughout Israel and 60% of the occupied West Bank.
+        </section>
+        <section class="step">
+          <span class='bold'>Barred</span> from living in <span class='bold'>68%</span>  of all towns in Israel by admissions committees.
+        </section>
+        <section class="step">
+          Access to most areas, but <span class='bold'>ID may be revoked</span> if living outside of Jerusalem.
+        </section>
+        <section class="step">
+          <span class='bold'>Barred</span> from living in all but <span class='bold'>40%</span>  of West Bank due to Israeli settler and military presence.
+        </section>
+        <section class="step">
+          <span class='bold'>Barred</span> from living outside of Gaza since 2007.
+        </section>
+        <section class="step">
+          <span class='bold'>Barred</span> from returning to live anywhere in Israel or Palestinian territory.
+        </section>
+      </div>
+      <div class='vote-box-div'>
+        <div class='ballot'></div>
+        <div class='vote-box'>VOTE</div>
+        <div class='cross'>x</div>
+      </div>
+      <div id='map'></div>
+      <div class='id-card-div'></div>
+      <div id="extra-space"></div>
+    </div>
+  </div>
 </div>
 </body>
-
 
 <script>
 // using this tutorial: http://vallandingham.me/scroll_demo/
@@ -96,10 +92,16 @@ var group_text = ['JEWISH ISRAELI CITIZENS', 'PALESTINIAN CITIZENS OF ISRAEL',
 
 var pop_text = ['5.9M', '1.3M', '0.3M', '2.3M', '1.6M', '5.7M'];
 
-d3.select('#vote')
-  .style('width', vote_width + 'px')
-  .style('height', vote_height + 'px')
-  .style('top', (0.4*height) + 'px');
+var margin_top = +d3.select('.vote-box-div').style('margin-top').slice(0, -2),
+    margin_left = +d3.select('.vote-box-div').style('margin-left').slice(0, -2);
+  
+// var offsets = document.getElementsByClassName('.vote-box-div').getBoundingClientRect();
+// var text_top = offsets.top - 25;// + 0.22*house_h;
+// var text_left = offsets.left + house_margin.left;
+
+d3.select('.cross')
+  .style('top', (margin_top-350) + 'px')
+  .style('left', (margin_left) + 'px');
 
 d3.select('.container').style('width', total_width + 'px');
 
@@ -191,7 +193,7 @@ function ready(error, background, water, map_1, map_2, map_3, map_4, map_5) {
 
         if (i == -1) {
           d3.select('#map').style('display', 'none');
-          d3.select('#vote').style('display', 'none');
+          d3.select('.vote-box-div').style('display', 'none');
           d3.select('.id-card-div').style('display', 'none');
           d3.select('.legend').style('display', 'none');
         }
@@ -199,9 +201,8 @@ function ready(error, background, water, map_1, map_2, map_3, map_4, map_5) {
         if (i > -1) {
           d3.select('.legend').style('display', 'block');
           d3.select('#map').style('display', 'block');
-          d3.select('#vote').style('display', 'block');
+          d3.select('.vote-box-div').style('display', 'block');
           d3.select('.id-card-div').style('display', 'block');
-
 
           d3.select('.access-layer')
             .remove();
@@ -224,14 +225,10 @@ function ready(error, background, water, map_1, map_2, map_3, map_4, map_5) {
         }
 
         if (-1 < i < 2) {
-          d3.select('#vote')// .inner')
-            .style('color', 'black')
-            .html('Can <br> Vote in Israeli Parliament')
+          d3.select('.cross').style('display', 'none');
         } 
         if (i >= 2) {
-          d3.select('#vote')// .inner')
-            .style('color', 'red')
-            .html("Can't <br> Vote in Israeli Parliament")
+          d3.select('.cross').style('display', 'block');
         }
       });
       lastIndex = activeIndex;
@@ -434,8 +431,6 @@ function draw_population_registry(left_margin_pop, top_margin_pop) {
     .style('left', text_left + 'px')
     .style('font-size', 40 + 'px')
     .html('ISRAELI POPULATION REGISTRY');
-
 }
-
 
 </script>
