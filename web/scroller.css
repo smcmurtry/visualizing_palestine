@@ -160,3 +160,10 @@ body {
 .id-pop {
   font-family: Effra_Std_Md, sans-serif;
 }
+
+.registry-text {
+  font-family: Effra_Std_Md, sans-serif;
+  color: #FFFDFF;
+  position: absolute;
+  text-align: center;
+}

@@ -7,7 +7,6 @@
   <script src="scroller.js"></script>
   <title>The Israeli ID System - Interactive</title>
   <meta name="description" content="The Israeli ID System - Interactive">
-    <!-- <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/> -->
   <link rel="stylesheet" type="text/css" href="scroller.css"/>
 
 </head>
@@ -18,12 +17,13 @@
   <div class='h1'>IDENTITY CRISIS</div>
   <div class='h2'>THE ISRAELI ID SYSTEM</div>
   <div class='intro-text'>
-  <div class='left'>
-    SINCE 1967, THE ISRAELI GOVERNMENT HAS BEEN THE DE-FACTO SOVEREIGN POWER IN CONTROL OF THE WHOLE OF HISTORIC PALESTINE, INCLUDING GAZA, THE WEST BANK, AND ISRAEL.
+    <div class='left'>
+      SINCE 1967, THE ISRAELI GOVERNMENT HAS BEEN THE DE-FACTO SOVEREIGN POWER IN CONTROL OF THE WHOLE OF HISTORIC PALESTINE, INCLUDING GAZA, THE WEST BANK, AND ISRAEL.
+    </div>
+    <div class='right'> ISRAELI AUTHORITIES CONTROL THE POPULATION REGISTRY AND ID SYSTEM, RESTRICTING WHERE PALESTINIANS CAN LIVE, THEIR ACCESS TO SERVICES AND THEIR PARTICIPATION IN THE POLITICAL SYSTEM.
+    </div>
   </div>
-  <div class='right'> ISRAELI AUTHORITIES CONTROL THE POPULATION REGISTRY AND ID SYSTEM, RESTRICTING WHERE PALESTINIANS CAN LIVE, THEIR ACCESS TO SERVICES AND THEIR PARTICIPATION IN THE POLITICAL SYSTEM.
-  </div>
-  </div>
+  <div id='pop_registry'></div>
   <div class='legend'>
 
     <div class='legend-entry left'>
@@ -119,6 +119,8 @@ var svg = d3.select("#map").append("svg")
     .attr("height", height)
     .append("g");
 
+draw_population_registry(200, 0);
+
 queue()
   .defer(d3.json, data_path + "background.json")
   .defer(d3.json, data_path + "water.json")
@@ -184,7 +186,7 @@ function ready(error, background, water, map_1, map_2, map_3, map_4, map_5) {
       var scrolledSections = d3.range(lastIndex + sign, activeIndex + sign, sign);
       scrolledSections.forEach(function(j) {
         var i = j - 1;
-        console.log(i)
+        // console.log(i)
         // this is the function called when section i scrolls into focus
 
         if (i == -1) {
@@ -264,11 +266,7 @@ function create_id_cards(card_width, colour, text_group, text_pop) {
       head_cy = photo_margin + 0.33*photo_h,
       font_size = 0.080*w,
       pop_font_size = 0.125*w,
-      // left_margin = +d3.select('body').style('margin-left').slice(0, -2),
-      // top_margin = +d3.select('body').style('margin-top').slice(0, -2),
       text_left = photo_margin + photo_w + text_margin;
-
-  console.log(photo_w)
 
   d3.select('.id-card-div').selectAll('svg').remove();
   d3.select('.id-card-div').selectAll('div').remove();
@@ -331,5 +329,113 @@ function create_id_cards(card_width, colour, text_group, text_pop) {
   d3.selectAll('.person').style('fill', colour);
 
 }
+
+function draw_population_registry(left_margin_pop, top_margin_pop) {
+  
+  d3.select('#pop_registry').style('margin-left', left_margin_pop + 'px');
+  d3.select('#pop_registry').style('margin-top', top_margin_pop + 'px');
+
+  var card_h = 150,
+      card_w = 1.6*card_h,
+      house_w = 320,
+      house_h = 200,
+      svg_w = 420,
+      svg_h = 380;
+
+  var card_margin = {top: 0, left: 90},
+      house_margin = {top: card_h, left: 50};
+
+  var photo_margin = 0.05*card_w,
+      corner_radius = 0.05*card_w,
+      photo_w = 0.3*card_w,
+      photo_h = 0.75*card_h,
+      head_radius = 0.33*photo_w,
+      shoulder_radius = 0.39*photo_w,
+      head_cy = photo_margin + photo_h/3;
+
+  var offsets = document.getElementById('pop_registry').getBoundingClientRect();
+  var text_top = offsets.top - 25;// + 0.22*house_h;
+  var text_left = offsets.left + house_margin.left;
+
+  var svg = d3.select("#pop_registry").append("svg")
+      .attr("width", svg_w)
+      .attr("height", svg_h);
+
+  var g_card = svg.append("g")
+      .attr("transform", "translate(" + card_margin.left + "," + card_margin.top + ")");
+
+  var g_house= svg.append("g")
+      .attr("transform", "translate(" + house_margin.left + "," + house_margin.top + ")");
+
+  g_card.append('rect')
+    .attr("width", card_w)
+    .attr("height", card_h)
+    .attr('rx', corner_radius)
+    .attr('ry', corner_radius)
+    .attr('stroke', '#949599')
+    .attr('stroke-width', 1)
+    .style('fill', '#FFFDFF');
+
+  g_card.append('circle')
+    .attr('cx', photo_margin + photo_w/2)
+    .attr('cy', head_cy)
+    .attr('r', head_radius)
+    .attr('fill', '#949599');
+
+  g_card.append('rect')
+    .attr('x', photo_margin + 0.025*photo_w)
+    .attr('y', head_cy + head_radius + 3)
+    .attr('width', photo_w*0.95)
+    .attr('height', 0.7*photo_h)
+    .attr('rx', shoulder_radius)
+    .attr('ry', shoulder_radius)
+    .attr('fill', '#949599');
+
+  function draw_hline(x1, x2, y) {
+    g_card.append('line')
+      .attr('x1', x1)
+      .attr('x2', x2)
+      .attr('y1', y)
+      .attr('y2', y)
+      .attr('stroke', '#949599')
+      .attr('stroke-width', 1);
+    }
+
+  draw_hline(0.4*card_w, 0.93*card_w, 0.2*card_h);
+  draw_hline(0.4*card_w, 0.93*card_w, 0.35*card_h);
+  draw_hline(0.4*card_w, 0.93*card_w, 0.5*card_h);
+
+  g_house.append('rect')
+    .attr('width', house_w)
+    .attr('height', house_h)
+    .attr('fill', '#3A3A3C')
+    .attr('stroke', '#5B5B5D')
+    .attr('stroke-width', 10);
+
+  g_house.append('rect')
+    .attr('width', 1.1*house_w)
+    .attr('height', 0.1*house_h)
+    .attr('y', house_h + 5)
+    .attr('x', -0.05*house_w)
+    .attr('fill', '#3A3A3C');
+
+  g_house.append('polygon')
+    .attr('points', '160,-60 350,0 -30,0')
+    .attr('fill', '#3A3A3C')
+    .attr('stroke', '#5B5B5D')
+    .attr('stroke-width', 10);
+
+  d3.select('#pop_registry')
+    .append('div')
+    .attr('class', 'registry-text')
+    .style('width', house_w + 'px')
+    .attr('height', house_h + 'px')
+    .style('top', text_top + 'px')
+    .style('left', text_left + 'px')
+    .style('font-size', 40 + 'px')
+    .html('ISRAELI POPULATION REGISTRY');
+
+}
+
 
 </script>
