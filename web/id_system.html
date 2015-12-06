@@ -350,10 +350,6 @@ function draw_population_registry(left_margin_pop, top_margin_pop) {
       shoulder_radius = 0.39*photo_w,
       head_cy = photo_margin + photo_h/3;
 
-  var offsets = document.getElementById('pop_registry').getBoundingClientRect();
-  var text_top = offsets.top - 25;// + 0.22*house_h;
-  var text_left = offsets.left + house_margin.left;
-
   var svg = d3.select("#pop_registry").append("svg")
       .attr("width", svg_w)
       .attr("height", svg_h);
@@ -361,7 +357,7 @@ function draw_population_registry(left_margin_pop, top_margin_pop) {
   var g_card = svg.append("g")
       .attr("transform", "translate(" + card_margin.left + "," + card_margin.top + ")");
 
-  var g_house= svg.append("g")
+  var g_house = svg.append("g")
       .attr("transform", "translate(" + house_margin.left + "," + house_margin.top + ")");
 
   g_card.append('rect')
@@ -403,6 +399,7 @@ function draw_population_registry(left_margin_pop, top_margin_pop) {
   draw_hline(0.4*card_w, 0.93*card_w, 0.5*card_h);
 
   g_house.append('rect')
+    .attr('id', 'house-rect')
     .attr('width', house_w)
     .attr('height', house_h)
     .attr('fill', '#3A3A3C')
@@ -422,15 +419,18 @@ function draw_population_registry(left_margin_pop, top_margin_pop) {
     .attr('stroke', '#5B5B5D')
     .attr('stroke-width', 10);
 
-  d3.select('#pop_registry')
-    .append('div')
-    .attr('class', 'registry-text')
-    .style('width', house_w + 'px')
-    .attr('height', house_h + 'px')
-    .style('top', text_top + 'px')
-    .style('left', text_left + 'px')
-    .style('font-size', 40 + 'px')
-    .html('ISRAELI POPULATION REGISTRY');
+  function add_text(text, y) {
+    g_house.append('text')
+      .attr('class', 'registry-text')
+      .attr('text-anchor', 'middle')
+      .attr('x', house_w/2)
+      .attr('y', y)
+      .text(text);
+  }
+
+  add_text('ISRAELI', 70);
+  add_text('POPULATION', 115);
+  add_text('REGISTRY', 160);
 }
 
 </script>

@@ -143,9 +143,9 @@ body {
 
 .registry-text {
   font-family: Effra_Std_Md, sans-serif;
-  color: #FFFDFF;
-  position: absolute;
+  fill: #FFFDFF;
   text-align: center;
+  font-size: 40px;
 }
 
 .vote-box-div {
