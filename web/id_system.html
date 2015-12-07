@@ -55,11 +55,7 @@
           <span class='bold'>Barred</span> from returning to live anywhere in Israel or Palestinian territory.
         </section>
       </div>
-      <div class='vote-box-div'>
-        <div class='ballot'></div>
-        <div class='vote-box'>VOTE</div>
-        <div class='cross'>x</div>
-      </div>
+      <div class='vote-svg'></div>
       <div id='map'></div>
       <div class='id-card-div'></div>
       <div id="extra-space"></div>
@@ -92,16 +88,16 @@ var group_text = ['JEWISH ISRAELI CITIZENS', 'PALESTINIAN CITIZENS OF ISRAEL',
 
 var pop_text = ['5.9M', '1.3M', '0.3M', '2.3M', '1.6M', '5.7M'];
 
-var margin_top = +d3.select('.vote-box-div').style('margin-top').slice(0, -2),
-    margin_left = +d3.select('.vote-box-div').style('margin-left').slice(0, -2);
+// var margin_top = +d3.select('.vote-box-div').style('margin-top').slice(0, -2),
+//     margin_left = +d3.select('.vote-box-div').style('margin-left').slice(0, -2);
   
 // var offsets = document.getElementsByClassName('.vote-box-div').getBoundingClientRect();
 // var text_top = offsets.top - 25;// + 0.22*house_h;
 // var text_left = offsets.left + house_margin.left;
 
-d3.select('.cross')
-  .style('top', (margin_top-350) + 'px')
-  .style('left', (margin_left) + 'px');
+// d3.select('.cross') 
+//   .style('top', (margin_top-350) + 'px')
+//   .style('left', (margin_left) + 'px');
 
 d3.select('.container').style('width', total_width + 'px');
 
@@ -122,6 +118,7 @@ var svg = d3.select("#map").append("svg")
     .append("g");
 
 draw_population_registry(200, 0);
+draw_vote_box();
 
 queue()
   .defer(d3.json, data_path + "background.json")
@@ -193,7 +190,7 @@ function ready(error, background, water, map_1, map_2, map_3, map_4, map_5) {
 
         if (i == -1) {
           d3.select('#map').style('display', 'none');
-          d3.select('.vote-box-div').style('display', 'none');
+          d3.select('.vote-svg').style('display', 'none');
           d3.select('.id-card-div').style('display', 'none');
           d3.select('.legend').style('display', 'none');
         }
@@ -201,7 +198,7 @@ function ready(error, background, water, map_1, map_2, map_3, map_4, map_5) {
         if (i > -1) {
           d3.select('.legend').style('display', 'block');
           d3.select('#map').style('display', 'block');
-          d3.select('.vote-box-div').style('display', 'block');
+          d3.select('.vote-svg').style('display', 'block');
           d3.select('.id-card-div').style('display', 'block');
 
           d3.select('.access-layer')
@@ -431,6 +428,59 @@ function draw_population_registry(left_margin_pop, top_margin_pop) {
   add_text('ISRAELI', 70);
   add_text('POPULATION', 115);
   add_text('REGISTRY', 160);
+}
+
+function draw_vote_box() {
+
+  var margin = 50,
+      box_len = 100,
+      font_size = 30,
+      x_size = 340,
+      ballot_h = 30,
+      ballot_w = 60,
+      ballot_border = 2;
+
+  var svg = d3.select('.vote-svg').append('svg')
+    .attr('width', 200)
+    .attr('height', 200)
+
+  svg.append('g')
+     .attr("transform", "translate(" + (margin + (box_len-ballot_w)/2) + "," + (margin-ballot_h+ballot_border/2) + ")")
+     .append('rect')
+     .attr('fill', 'white')  
+     .attr('width', ballot_w)
+     .attr('height', ballot_h)
+     .attr('stroke', '#6D6E72')
+     .attr('stroke-width', ballot_border);
+
+  var g = svg.append("g")
+      .attr("transform", "translate(" + margin + "," + margin + ")");
+
+  g.append('rect')
+    .attr('width', box_len)
+    .attr('height', box_len)
+    .attr('fill', '#6D6E72')
+
+  g.append('text')
+    .attr('text-anchor', 'middle')
+    .attr('x', box_len/2)
+    .attr('y', (box_len + font_size - 8)/2)
+    .attr('fill', 'white')
+    .attr('font-size', font_size)
+    .attr('font-family', 'Effra_Std_Rg, sans-serif')
+    .text('VOTE');
+
+  g.append('g')
+    .append('text')
+    .attr('class', 'cross')
+    .attr('fill', 'red')
+    .attr('font-size', x_size)
+    .attr('text-anchor', 'middle')
+    .attr('x', box_len/2)
+    .attr('y', box_len+15)
+    .attr('opacity', 0.9)
+    .attr('font-family', 'Effra_Std_Rg, sans-serif')
+    .text('x');
 }
 
 </script>

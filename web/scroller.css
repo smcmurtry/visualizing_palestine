@@ -112,8 +112,8 @@ body {
   height: 300px;
 }
 
-#map, .id-card-div, .vote-box-div {
-  display: inline-block;
+#map, .id-card-div, .vote-svg {
+  display: none;
   position: fixed;
   top: 60px;
   z-index: 1;
@@ -148,39 +148,6 @@ body {
   font-size: 40px;
 }
 
-.vote-box-div {
-  text-align: center;
-  width: 100px;
-  margin-top: 230px;
-  margin-left: 0px;
-  display: none;
-}
-
-.vote-box {
-  background-color: #6D6E72;
-  width: 100px;
-  height: 70px;
-  font-family: Effra_Std_Rg, sans-serif;
-  color: white;
-  text-align: center;
-  padding-top: 30px;
-  font-size: 30px;
-}
-
-.ballot {
-  width: 60px;
-  height: 30px;
-  background-color: white;
-  border-width: 2px 2px 0px 2px;
-  border-style: solid;
-  border-color: #6D6E72;
-  margin: 0 auto;
-}
-
-.cross {
-  font-family: sans-serif;
-  color: red;
-  font-size: 300px;
-  position: absolute;
-  opacity: 0.9;
+.vote-svg {
+  margin-top: 200px;
 }
