@@ -5,6 +5,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.19/topojson.min.js"></script>
   <script src="queue.js"></script>
   <script src="scroller.js"></script>
+  <script src="draw_id_cards.js"></script>
+  <script src="draw_population_registry.js"></script>
+  <script src="draw_vote_box.js"></script>
   <title>The Israeli ID System - Interactive</title>
   <meta name="description" content="The Israeli ID System - Interactive">
   <link rel="stylesheet" type="text/css" href="scroller.css"/>
@@ -68,8 +71,7 @@
 // using this tutorial: http://vallandingham.me/scroll_demo/
 var data_path = "../data/";
 
-var vote_width = 100,
-    vote_height = 100,
+var vote_width = 200,
     map_width = 300,
     card_width = 200,
     text_width = 250,
@@ -87,17 +89,6 @@ var group_text = ['JEWISH ISRAELI CITIZENS', 'PALESTINIAN CITIZENS OF ISRAEL',
   'PALESTINIAN EXILES'];
 
 var pop_text = ['5.9M', '1.3M', '0.3M', '2.3M', '1.6M', '5.7M'];
-
-// var margin_top = +d3.select('.vote-box-div').style('margin-top').slice(0, -2),
-//     margin_left = +d3.select('.vote-box-div').style('margin-left').slice(0, -2);
-  
-// var offsets = document.getElementsByClassName('.vote-box-div').getBoundingClientRect();
-// var text_top = offsets.top - 25;// + 0.22*house_h;
-// var text_left = offsets.left + house_margin.left;
-
-// d3.select('.cross') 
-//   .style('top', (margin_top-350) + 'px')
-//   .style('left', (margin_left) + 'px');
 
 d3.select('.container').style('width', total_width + 'px');
 
@@ -204,7 +195,7 @@ function ready(error, background, water, map_1, map_2, map_3, map_4, map_5) {
           d3.select('.access-layer')
             .remove();
 
-          create_id_cards(card_width, colours[i], group_text[i], pop_text[i]);
+          draw_id_cards(card_width, colours[i], group_text[i], pop_text[i]);
 
           d3.select('.can-live-rect')
             .style('background-color', colours[i]);
@@ -245,242 +236,6 @@ function ready(error, background, water, map_1, map_2, map_3, map_4, map_5) {
     });
   }
   display();
-}
-
-function create_id_cards(card_width, colour, text_group, text_pop) {
-  var w = card_width,
-      h = w/1.6,
-      photo_margin = 0.05*w,
-      corner_radius = 0.05*w,
-      text_margin = photo_margin,
-      photo_w = 0.3*w,
-      photo_h = 0.75*h,
-      head_radius = 0.33*photo_w,
-      shoulder_radius = 0.39*photo_w,
-      head_cy = photo_margin + 0.33*photo_h,
-      font_size = 0.080*w,
-      pop_font_size = 0.125*w,
-      text_left = photo_margin + photo_w + text_margin;
-
-  d3.select('.id-card-div').selectAll('svg').remove();
-  d3.select('.id-card-div').selectAll('div').remove();
-
-  var svg = d3.select('.id-card-div')
-      .append('svg')
-      .attr('class', 'id-card')
-      .attr("width", w)
-      .attr("height", h)
-      .append("g");
-
-  var card = svg.append('rect')
-    .attr('class', 'card')
-    .attr("width", w)
-    .attr("height", h)
-    .attr('rx', corner_radius)
-    .attr('ry', corner_radius);
-
-  var photo = svg.append('rect')
-    .attr('class', 'photo')
-    .attr('x', photo_margin)
-    .attr('y', photo_margin)
-    .attr('width', photo_w)
-    .attr('height', photo_h);
-
-  var head = svg.append('circle')
-    .attr('class', 'person')
-    .attr('cx', photo_margin + photo_w/2)
-    .attr('cy', head_cy)
-    .attr('r', head_radius);
-
-  var body = svg.append('rect')
-    .attr('class', 'person')
-    .attr('x', photo_margin + 0.025*photo_w)
-    .attr('y', head_cy + head_radius + 3)
-    .attr('width', photo_w*0.95)
-    .attr('height', photo_h)
-    .attr('rx', shoulder_radius)
-    .attr('ry', shoulder_radius);
-
-  var text = d3.select('.id-card-div')
-    .append('div')
-    .attr('class', 'id-text')
-    .style('left', text_left + 'px')
-    .style('top', photo_margin + 'px')
-    .style('width', (w/2) + 'px')
-    .style('font-size', font_size + 'px')
-    .html(text_group)
-
-  var population = d3.select('.id-card-div')
-    .append('div')
-    .attr('class', 'id-pop')
-    .style('left', text_left + 'px')
-    .style('top', (photo_margin + photo_h - pop_font_size) + 'px')
-    .style('width', (w/2) + 'px')
-    .style('font-size', pop_font_size + 'px')
-    .html(text_pop);
-
-  d3.selectAll('.card').style('fill', colour);
-  d3.selectAll('.person').style('fill', colour);
-
-}
-
-function draw_population_registry(left_margin_pop, top_margin_pop) {
-  
-  d3.select('#pop_registry').style('margin-left', left_margin_pop + 'px');
-  d3.select('#pop_registry').style('margin-top', top_margin_pop + 'px');
-
-  var card_h = 150,
-      card_w = 1.6*card_h,
-      house_w = 320,
-      house_h = 200,
-      svg_w = 420,
-      svg_h = 380;
-
-  var card_margin = {top: 0, left: 90},
-      house_margin = {top: card_h, left: 50};
-
-  var photo_margin = 0.05*card_w,
-      corner_radius = 0.05*card_w,
-      photo_w = 0.3*card_w,
-      photo_h = 0.75*card_h,
-      head_radius = 0.33*photo_w,
-      shoulder_radius = 0.39*photo_w,
-      head_cy = photo_margin + photo_h/3;
-
-  var svg = d3.select("#pop_registry").append("svg")
-      .attr("width", svg_w)
-      .attr("height", svg_h);
-
-  var g_card = svg.append("g")
-      .attr("transform", "translate(" + card_margin.left + "," + card_margin.top + ")");
-
-  var g_house = svg.append("g")
-      .attr("transform", "translate(" + house_margin.left + "," + house_margin.top + ")");
-
-  g_card.append('rect')
-    .attr("width", card_w)
-    .attr("height", card_h)
-    .attr('rx', corner_radius)
-    .attr('ry', corner_radius)
-    .attr('stroke', '#949599')
-    .attr('stroke-width', 1)
-    .style('fill', '#FFFDFF');
-
-  g_card.append('circle')
-    .attr('cx', photo_margin + photo_w/2)
-    .attr('cy', head_cy)
-    .attr('r', head_radius)
-    .attr('fill', '#949599');
-
-  g_card.append('rect')
-    .attr('x', photo_margin + 0.025*photo_w)
-    .attr('y', head_cy + head_radius + 3)
-    .attr('width', photo_w*0.95)
-    .attr('height', 0.7*photo_h)
-    .attr('rx', shoulder_radius)
-    .attr('ry', shoulder_radius)
-    .attr('fill', '#949599');
-
-  function draw_hline(x1, x2, y) {
-    g_card.append('line')
-      .attr('x1', x1)
-      .attr('x2', x2)
-      .attr('y1', y)
-      .attr('y2', y)
-      .attr('stroke', '#949599')
-      .attr('stroke-width', 1);
-    }
-
-  draw_hline(0.4*card_w, 0.93*card_w, 0.2*card_h);
-  draw_hline(0.4*card_w, 0.93*card_w, 0.35*card_h);
-  draw_hline(0.4*card_w, 0.93*card_w, 0.5*card_h);
-
-  g_house.append('rect')
-    .attr('id', 'house-rect')
-    .attr('width', house_w)
-    .attr('height', house_h)
-    .attr('fill', '#3A3A3C')
-    .attr('stroke', '#5B5B5D')
-    .attr('stroke-width', 10);
-
-  g_house.append('rect')
-    .attr('width', 1.1*house_w)
-    .attr('height', 0.1*house_h)
-    .attr('y', house_h + 5)
-    .attr('x', -0.05*house_w)
-    .attr('fill', '#3A3A3C');
-
-  g_house.append('polygon')
-    .attr('points', '160,-60 350,0 -30,0')
-    .attr('fill', '#3A3A3C')
-    .attr('stroke', '#5B5B5D')
-    .attr('stroke-width', 10);
-
-  function add_text(text, y) {
-    g_house.append('text')
-      .attr('class', 'registry-text')
-      .attr('text-anchor', 'middle')
-      .attr('x', house_w/2)
-      .attr('y', y)
-      .text(text);
-  }
-
-  add_text('ISRAELI', 70);
-  add_text('POPULATION', 115);
-  add_text('REGISTRY', 160);
-}
-
-function draw_vote_box() {
-
-  var margin = 50,
-      box_len = 100,
-      font_size = 30,
-      x_size = 340,
-      ballot_h = 30,
-      ballot_w = 60,
-      ballot_border = 2;
-
-  var svg = d3.select('.vote-svg').append('svg')
-    .attr('width', 200)
-    .attr('height', 200)
-
-  svg.append('g')
-     .attr("transform", "translate(" + (margin + (box_len-ballot_w)/2) + "," + (margin-ballot_h+ballot_border/2) + ")")
-     .append('rect')
-     .attr('fill', 'white')  
-     .attr('width', ballot_w)
-     .attr('height', ballot_h)
-     .attr('stroke', '#6D6E72')
-     .attr('stroke-width', ballot_border);
-
-  var g = svg.append("g")
-      .attr("transform", "translate(" + margin + "," + margin + ")");
-
-  g.append('rect')
-    .attr('width', box_len)
-    .attr('height', box_len)
-    .attr('fill', '#6D6E72')
-
-  g.append('text')
-    .attr('text-anchor', 'middle')
-    .attr('x', box_len/2)
-    .attr('y', (box_len + font_size - 8)/2)
-    .attr('fill', 'white')
-    .attr('font-size', font_size)
-    .attr('font-family', 'Effra_Std_Rg, sans-serif')
-    .text('VOTE');
-
-  g.append('g')
-    .append('text')
-    .attr('class', 'cross')
-    .attr('fill', 'red')
-    .attr('font-size', x_size)
-    .attr('text-anchor', 'middle')
-    .attr('x', box_len/2)
-    .attr('y', box_len+15)
-    .attr('opacity', 0.9)
-    .attr('font-family', 'Effra_Std_Rg, sans-serif')
-    .text('x');
 }
 
 </script>

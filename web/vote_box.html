@@ -88,8 +88,8 @@ function draw_vote_box() {
      .attr('stroke', '#6D6E72')
      .attr('stroke-width', ballot_border);
 
-    var g = svg.append("g")
-        .attr("transform", "translate(" + margin + "," + margin + ")");
+  var g = svg.append("g")
+      .attr("transform", "translate(" + margin + "," + margin + ")");
 
   g.append('rect')
     .attr('width', box_len)
@@ -120,10 +120,7 @@ function draw_vote_box() {
 
 draw_vote_box();
 
-d3.select('.cross').style('display', 'none');
-// d3.select('.cross').style('display', 'block');
-
-
-
+// d3.select('.cross').style('display', 'none');
+d3.select('.cross').style('display', 'block');
 
 </script>
