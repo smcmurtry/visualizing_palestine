@@ -7,6 +7,10 @@
 
 <style>
 
+body {
+  background-color: #EEF0EF;
+}
+
 #main {
   width: 800px;
   margin: 0 auto;
@@ -75,7 +79,7 @@
 
 #h-pipe {
   position: relative;
-  width: 400px;
+  width: 300px;
   height: 100px;
 }
 
@@ -96,6 +100,13 @@
   z-index: -100;
 }
 
+#arrow {
+  height: 200px;
+  width: 100px;
+  position: relative;
+  /*background-color: red;*/
+}
+
 </style>
 
 <body>
@@ -104,6 +115,7 @@
       <div id='a'></div>
       <div id='h-pipe' class='pipe'></div>
       <div id='v-pipe' class='pipe'></div>
+      <svg id='arrow'></svg>
     </div>
     <div id='b'>
       <div id='c'></div>
@@ -136,18 +148,29 @@
 
 <script>
 
+bk_colours = ['#EEF0EF', '#89D3DE', '#7CBFC8', '#6EAAB4', '#60959D', '#949599'];
+
+var body = d3.select('body');
 var intro = d3.select('#intro');
 var a = d3.select('#a');
 var b = d3.select('#b');
 var h_pipe = d3.select('#h-pipe');
 var v_pipe = d3.select('#v-pipe');
 var v2_pipe = d3.select('#v2-pipe');
+var arrow = d3.select('#arrow');
 
 h_pipe.style('top', -200 + 'px')
-      .style('left', 300 + 'px');
+      .style('left', 400 + 'px');
 
 v_pipe.style('top', -200 + 'px')
       .style('left', 600 + 'px');
+
+arrow.style('top', -1130 + 'px')
+      .style('left', 300 + 'px');
+
+arrow.append('polygon')
+    .attr('points', '20,100 100,170 100,30')
+    .attr('fill', 'lightgrey');
 
 var bp = +d3.select('body').style('margin-top').slice(0, -2)
 var h = +intro.style('height').slice(0, -2)
@@ -179,6 +202,7 @@ gs(d3.selectAll('section.step'))
 
 gs.on('active', function(i){
   console.log(i)
+  body.style('background-color', bk_colours[i])
   if (i < 2) {
     v2_pipe.style('display', 'block');
   } else {
