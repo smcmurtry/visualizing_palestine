@@ -2,64 +2,124 @@
 <head>
   <meta charset="utf-8">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.js"></script>
+  <script src="gscroll.js"></script>
 </head>
 
 <style>
 
-.a {
+#main {
+  width: 800px;
+  margin: 0 auto;
+}
+
+#a {
   background-color: blue;
   margin-bottom: 500px;
 }
 
 #b {
   background-color: green;
-  margin-bottom: 1000px;
+  float: right
 }
 
-.a, #b {
+#a, #b {
   width: 300px;
   height: 300px;
   position: static;
 }
 
-.fixed {
-  position: fixed;
-  top: 600px;
+
+#sections {
+  width: 150px;
+  position: relative;
+  display: inline-block;
+  top: 0px;
+  z-index: 90;
+  padding-bottom: 200px;
+}
+
+.step {
+  margin-bottom: 200px;
+}
+
+.extra-space {
+  width: 100%;
+  height: 400px;
 }
 
 </style>
 
 <body>
-
-<div class='a'></div>
-<div id='b'></div>
-
+  <div id='main'>
+    <div id='a'></div>
+    <div id='b'></div>
+    <div id='sections'>
+      <section class="step">
+        <span class='bold'>Free</span> to live throughout Israel and 60% of the occupied West Bank.
+      </section>
+      <section class="step">
+        <span class='bold'>Barred</span> from living in <span class='bold'>68%</span>  of all towns in Israel by admissions committees.
+      </section>
+      <section class="step">
+        Access to most areas, but <span class='bold'>ID may be revoked</span> if living outside of Jerusalem.
+      </section>
+      <section class="step">
+        <span class='bold'>Barred</span> from living in all but <span class='bold'>40%</span>  of West Bank due to Israeli settler and military presence.
+      </section>
+      <section class="step">
+        <span class='bold'>Barred</span> from living outside of Gaza since 2007.
+      </section>
+      <section class="step">
+        <span class='bold'>Barred</span> from returning to live anywhere in Israel or Palestinian territory.
+      </section>
+      <div class='extra-space'></div>
+    </div>
+  </div>
 </body>
 
 <script>
 
+var a = d3.select('#a').node();
+var b = d3.select('#b').node();
 
+var bp = +d3.select('body').style('margin-top').slice(0, -2)
+var h = +d3.select('#a').style('height').slice(0, -2)
+var mb = +d3.select('#a').style('margin-bottom').slice(0, -2)
+
+var sticky_top = 50;
+var if_break = -h-mb+sticky_top;
+
+// console.log(bp, h, mb)
+// console.log(b.getBoundingClientRect().top);
 
 d3.select(window).on('scroll', function() {
-  // console.log(x)
-  var logo = document.getElementById('b');
-  var viewportOffset = logo.getBoundingClientRect();
+  var a_viewportOffset = a.getBoundingClientRect();
+  var b_viewportOffset = b.getBoundingClientRect();
 
-  // var viewportOffset = el.getBoundingClientRect();
-  // these are relative to the viewport
-  // var top = viewportOffset.top;
-  // var left = viewportOffset.left;
-
-  if (viewportOffset.top <= 600) {
+  if (a_viewportOffset.top <= if_break) {
     d3.select('#b')
       .style('position', 'fixed')
-      .attr('class', 'fixed')
+      .style('top', (sticky_top) + 'px')
+      .style('left', b_viewportOffset.left + 'px')
+  } else {
+    d3.select('#b')
+      .style('position', 'static')
   }
 
-  console.log("left pos.:", viewportOffset.left);
-  console.log("top pos.:", viewportOffset.top);
 })
 
+ var gs = gscroll().container(d3.select('#sections'))
+
+gs(d3.selectAll('section.step'))
+
+gs.on('active', function(i){
+  curPosStr = i
+
+  d3.selectAll('section.step')
+    .transition().duration(function(d, j){ return j == i ? 0 : 200 })
+      .style('opacity', function(d, j){
+        return j == i ? 1 : j == i + 1 ? .1 : .001 })
+})
 
 
 </script>
