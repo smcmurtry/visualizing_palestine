@@ -53,7 +53,6 @@ function gscroll() {
 
   function keydown(forceDown) {
     //sorry for this
-    // if(d3.select('.gscroll-active').classed('explore'))return
 
     var delta;
     if (d3.event && !forceDown){
@@ -95,13 +94,6 @@ function gscroll() {
     if (!_x) return container
 
     container = _x
-    return rv
-  }
-
-  rv.fixed = function(_x){
-    if (!_x) return fixed
-
-    fixed = _x
     return rv
   }
 

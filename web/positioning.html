@@ -12,9 +12,13 @@
   margin: 0 auto;
 }
 
+#intro {
+  width: 100%;
+  height: 1000px;
+}
+
 #a {
   background-color: blue;
-  margin-bottom: 500px;
 }
 
 #b {
@@ -28,6 +32,23 @@
   position: static;
 }
 
+#c {
+  width: 200px;
+  height: 100px;
+  margin-top: 100px;
+  background-color: orange;
+  z-index: 1;
+}
+
+#d {
+  width: 200px;
+  height: 100px;
+  top: -150px;
+  left: 100px;
+  background-color: brown;
+  position: relative;
+  z-index: 10;
+}
 
 #sections {
   width: 150px;
@@ -47,12 +68,48 @@
   height: 400px;
 }
 
+.pipe {
+  background-color: lightgrey;
+  /*opacity: 0.3;*/
+}
+
+#h-pipe {
+  position: relative;
+  width: 400px;
+  height: 100px;
+}
+
+#v-pipe {
+  position: relative;
+  width: 100px;
+  height: 780px;
+}
+
+#v2-pipe {
+  display: none;
+  position: relative;
+  width: 100px;
+  height: 80px;
+  top: -400px;
+  left: 100px;
+  background-color: lightgrey;
+  z-index: -100;
+}
+
 </style>
 
 <body>
   <div id='main'>
-    <div id='a'></div>
-    <div id='b'></div>
+    <div id='intro'>
+      <div id='a'></div>
+      <div id='h-pipe' class='pipe'></div>
+      <div id='v-pipe' class='pipe'></div>
+    </div>
+    <div id='b'>
+      <div id='c'></div>
+      <div id='d'></div>
+      <div id='v2-pipe' class='pipe'></div>
+    </div>
     <div id='sections'>
       <section class="step">
         <span class='bold'>Free</span> to live throughout Israel and 60% of the occupied West Bank.
@@ -79,31 +136,39 @@
 
 <script>
 
-var a = d3.select('#a').node();
-var b = d3.select('#b').node();
+var intro = d3.select('#intro');
+var a = d3.select('#a');
+var b = d3.select('#b');
+var h_pipe = d3.select('#h-pipe');
+var v_pipe = d3.select('#v-pipe');
+var v2_pipe = d3.select('#v2-pipe');
+
+h_pipe.style('top', -200 + 'px')
+      .style('left', 300 + 'px');
+
+v_pipe.style('top', -200 + 'px')
+      .style('left', 600 + 'px');
 
 var bp = +d3.select('body').style('margin-top').slice(0, -2)
-var h = +d3.select('#a').style('height').slice(0, -2)
-var mb = +d3.select('#a').style('margin-bottom').slice(0, -2)
+var h = +intro.style('height').slice(0, -2)
+// var mb = +a.style('margin-bottom').slice(0, -2)
 
 var sticky_top = 50;
-var if_break = -h-mb+sticky_top;
+var if_break = -h+sticky_top;
 
 // console.log(bp, h, mb)
 // console.log(b.getBoundingClientRect().top);
 
 d3.select(window).on('scroll', function() {
-  var a_viewportOffset = a.getBoundingClientRect();
-  var b_viewportOffset = b.getBoundingClientRect();
+  var intro_viewportOffset = intro.node().getBoundingClientRect();
+  var b_viewportOffset = b.node().getBoundingClientRect();
 
-  if (a_viewportOffset.top <= if_break) {
-    d3.select('#b')
-      .style('position', 'fixed')
+  if (intro_viewportOffset.top <= if_break) {
+    b.style('position', 'fixed')
       .style('top', (sticky_top) + 'px')
       .style('left', b_viewportOffset.left + 'px')
   } else {
-    d3.select('#b')
-      .style('position', 'static')
+    b.style('position', 'static')
   }
 
 })
@@ -113,7 +178,12 @@ d3.select(window).on('scroll', function() {
 gs(d3.selectAll('section.step'))
 
 gs.on('active', function(i){
-  curPosStr = i
+  console.log(i)
+  if (i < 2) {
+    v2_pipe.style('display', 'block');
+  } else {
+    v2_pipe.style('display', 'none');
+  }
 
   d3.selectAll('section.step')
     .transition().duration(function(d, j){ return j == i ? 0 : 200 })
