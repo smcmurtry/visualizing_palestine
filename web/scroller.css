@@ -33,7 +33,6 @@ body {
   height: 200px;
   font-family: Effra_Std_Bd, sans-serif;
   text-align: justify;
-
 }
 
 .left, .right {
@@ -43,10 +42,10 @@ body {
 .left {
   float: left;
 }
+
 .right {
   float: right;
 }
-
 
 .legend { 
   width: 500px; 
@@ -89,15 +88,21 @@ body {
   top: 0px;
   z-index: 90;
   padding-bottom: 200px;
+  /*padding-top: 100px;*/
+  /*padding-top: 100px;*/
 }
 
 .step {
   margin-bottom: 200px;
+  /*margin-bottom: 100px;*/
+  /*margin-top: 200px;*/
   font-family: Effra_Std_Rg, sans-serif;
-  font-size: 16px;
+  font-size: 20px;
   line-height: 23px;
   color: #767678;
 }
+
+/*.first {  padding-bottom: 200px; }*/
 
 #sections .title {
   font-family: Effra_Std_Rg, sans-serif;
@@ -113,8 +118,8 @@ body {
 }
 
 #map, .id-card-div, .vote-svg {
-  display: none;
-  position: fixed;
+  display: block;
+  /*position: fixed;*/
   top: 60px;
   z-index: 1;
   /*margin-left: 100px;*/
@@ -149,5 +154,11 @@ body {
 }
 
 .vote-svg {
-  margin-top: 200px;
+  /*margin-top: 200px;*/
+}
+
+.abc {
+  height: 600px;
+  width: 400px;
+  position: absolute;
 }

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.19/topojson.min.js"></script>
+  <script src="queue.js"></script>
+  <script src="gscroll.js"></script>
+  <script src="draw_id_cards.js"></script>
+  <script src="draw_population_registry.js"></script>
+  <script src="draw_vote_box.js"></script>
+  <title>The Israeli ID System - Interactive</title>
+  <meta name="description" content="The Israeli ID System - Interactive">
+  <link rel="stylesheet" type="text/css" href="scroller.css"/>
+</head>
+
+<body>
+  <div class='all'>
+  <div class='h1'>IDENTITY CRISIS</div>
+  <div class='h2'>THE ISRAELI ID SYSTEM</div>
+  <div class='intro-text'>
+    <div class='left'>
+      SINCE 1967, THE ISRAELI GOVERNMENT HAS BEEN THE DE-FACTO SOVEREIGN POWER IN CONTROL OF THE WHOLE OF HISTORIC PALESTINE, INCLUDING GAZA, THE WEST BANK, AND ISRAEL.
+    </div>
+    <div class='right'> ISRAELI AUTHORITIES CONTROL THE POPULATION REGISTRY AND ID SYSTEM, RESTRICTING WHERE PALESTINIANS CAN LIVE, THEIR ACCESS TO SERVICES AND THEIR PARTICIPATION IN THE POLITICAL SYSTEM.
+    </div>
+  </div>
+  <div id='pop_registry'></div>
+  <div class='abc'>
+    <div class='vote-svg'></div>
+    <div id='map'></div>
+    <div class='id-card-div'></div>
+  </div>
+<!--   <div class='legend'>
+    <div class='legend-entry left'>
+      <div class='can-live-rect'></div>
+      <div class='legend-text'>WHERE YOU CAN LIVE</div>
+    </div>
+    <div class='legend-entry right'>
+      <div class='cant-live-rect'></div>
+      <div class='legend-text'>WHERE YOU CAN'T LIVE</div>
+    </div>
+  </div> -->
+  <div class="container">
+    <div id='graphic'>
+      <div id='sections'>
+        <!-- <section class="step first"> </section> -->
+        <section class="step">
+          <span class='bold'>Free</span> to live throughout Israel and 60% of the occupied West Bank.
+        </section>
+        <section class="step">
+          <span class='bold'>Barred</span> from living in <span class='bold'>68%</span>  of all towns in Israel by admissions committees.
+        </section>
+        <section class="step">
+          Access to most areas, but <span class='bold'>ID may be revoked</span> if living outside of Jerusalem.
+        </section>
+        <section class="step">
+          <span class='bold'>Barred</span> from living in all but <span class='bold'>40%</span>  of West Bank due to Israeli settler and military presence.
+        </section>
+        <section class="step">
+          <span class='bold'>Barred</span> from living outside of Gaza since 2007.
+        </section>
+        <section class="step">
+          <span class='bold'>Barred</span> from returning to live anywhere in Israel or Palestinian territory.
+        </section>
+      </div>
+
+      <div id="extra-space"></div>
+      <div id="extra-space"></div>
+      <div id="extra-space"></div>
+    </div>
+  </div>
+</div>
+</body>
+
+<script>
+// using this tutorial: http://vallandingham.me/scroll_demo/
+var data_path = "../data/";
+
+var vote_width = 200,
+    map_width = 300,
+    card_width = 160,
+    text_width = 250,
+    text_margin = 150,
+    total_width = vote_width + map_width + card_width + text_width,
+    height = 700,
+    maps = [];
+
+var path = d3.geo.path().projection(null);
+
+var colours = ['#3E8FAD', '#4CADCE', '#6DCFF6', '#83C774', '#74AD69', '#949599'];
+
+var group_text = ['JEWISH ISRAELI CITIZENS', 'PALESTINIAN CITIZENS OF ISRAEL',
+  'EAST JERUSALEM PALESTINIANS', 'WEST BANK PALESTINIANS', 'GAZA STRIP PALESTINIANS',
+  'PALESTINIAN EXILES'];
+
+var pop_text = ['5.9M', '1.3M', '0.3M', '2.3M', '1.6M', '5.7M'];
+
+d3.select('.container').style('width', total_width + 'px');
+
+// d3.select('#sections')
+//   .style('width', text_width + 'px')
+//   .style('margin-left', (total_width-text_width + text_margin) + 'px')
+
+// d3.select("#map")
+//   .style('margin-left', vote_width + 'px');
+
+// d3.select(".id-card-div")
+//   .style('margin-left', (vote_width + map_width) + 'px')
+//   .style('top', (0.4*height) + 'px');
+
+d3.select('#sections')
+  .style('width', text_width + 'px')
+  // .style('margin-left', (total_width-text_width + text_margin) + 'px')
+
+d3.select(".id-card-div")
+  .style('margin-left', (text_width+text_margin) + 'px')
+  .style('top', (0.2*height) + 'px');
+
+d3.select("#map")
+  .style('margin-left', (text_width+text_margin+card_width-110) + 'px');
+
+d3.select('.vote-svg')
+  .style('top', (0.14*height) + 'px')
+  .style('margin-left', (text_width + card_width + map_width) + 'px');
+
+var svg = d3.select("#map").append("svg")
+    .attr("width", map_width)
+    .attr("height", height)
+    .append("g");
+
+draw_population_registry(200, 0);
+draw_vote_box();
+
+queue()
+  .defer(d3.json, data_path + "background.json")
+  .defer(d3.json, data_path + "water.json")
+  .defer(d3.json, data_path + "map_1.json")
+  .defer(d3.json, data_path + "map_2.json")
+  .defer(d3.json, data_path + "map_3.json")
+  .defer(d3.json, data_path + "map_4.json")
+  .defer(d3.json, data_path + "map_5.json")
+  .await(ready);
+
+function ready(error, background, water, map_1, map_2, map_3, map_4, map_5) {
+  if (error) throw error;
+
+  var _background = topojson.feature(background, background.objects.background);
+  var _water = topojson.feature(water, water.objects.water);
+
+  var map_vars = [map_1, map_2, map_3, map_4, map_5];
+  var map_fnames = ['map_1', 'map_2', 'map_3', 'map_4', 'map_5'];
+  for (var i = 0; i < map_vars.length; i++) {
+    var _map = topojson.feature(map_vars[i], map_vars[i].objects[map_fnames[i]]);
+    maps.push(_map)
+  };
+
+  svg.append("g")
+    .selectAll("path")
+      .data(_background.features)
+    .enter().append("path")
+      .attr("class", "riding")
+      .attr("d", path)
+      .attr("fill", '#DDDEE0');
+
+  svg.append("g")
+    .selectAll("path")
+      .data(_water.features)
+    .enter().append("path")
+      .attr("class", "riding")
+      .attr("d", path)
+      .attr("fill", '#89D3DE');
+
+  initialize_zoom();
+
+  function initialize_zoom() {
+    var b = path.bounds(_background),
+        s = .95 / Math.max((b[1][0] - b[0][0]) / map_width, (b[1][1] - b[0][1]) / height),
+        t = [(map_width - s * (b[1][0] + b[0][0])) / 2, (height - s * (b[1][1] + b[0][1]))/2 ];
+
+    svg.attr("transform", "translate(" + t + ")scale(" + s + ")");
+  }
+
+  var gs = gscroll()
+      .container(d3.select('#graphic'))
+
+  gs(d3.selectAll('section.step'))
+
+  gs.on('active', function(i1){
+    curPosStr = i1
+
+    d3.selectAll('section.step')
+      .transition().duration(function(d, j){ return j == i1 ? 0 : 200 })
+        .style('opacity', function(d, j){
+          return j == i1 ? 1 : j == i1 + 1 ? .1 : .001 })
+
+
+        var i = i1;// - 1;
+        console.log(i)
+        // this is the function called when section i scrolls into focus
+
+        if (i == -1) {
+          // d3.select('#map').style('display', 'none');
+          // d3.select('.vote-svg').style('display', 'none');
+          // d3.select('.id-card-div').style('display', 'none');
+          // d3.select('.legend').style('display', 'none');
+
+          d3.select('#map').style('position', 'absolute');
+          d3.select('.vote-svg').style('position', 'absolute');
+          d3.select('.id-card-div').style('position', 'absolute');
+
+        }
+
+        if (i > -1) {
+          // d3.select('.legend').style('display', 'block');
+          d3.select('#map').style('position', 'fixed');
+          d3.select('.vote-svg').style('position', 'fixed');
+          d3.select('.id-card-div').style('position', 'fixed');
+
+          d3.select('.access-layer')
+            .remove();
+
+          draw_id_cards(card_width, colours[i], group_text[i], pop_text[i]);
+
+          d3.select('.can-live-rect')
+            .style('background-color', colours[i]);
+        }
+
+        if (i > -1 && i < 5) {
+          svg.append("g")
+            .attr('class', 'access-layer')
+            .selectAll("path")
+              .data(maps[i].features)
+            .enter().append("path")
+              .attr("class", "riding")
+              .attr("d", path)
+              .attr("fill", colours[i])
+        }
+
+        if (-1 < i < 2) {
+          d3.select('.cross').style('display', 'none');
+        } 
+        if (i >= 2) {
+          d3.select('.cross').style('display', 'block');
+        }
+
+  })
+
+}
+
+
+</script>

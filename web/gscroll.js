@@ -30,32 +30,12 @@ function gscroll() {
 
 
   function reposition(){
-    var i1 = d3.bisect(sectionPos, pageYOffset - 10 - containerStart)
+    var i1 = d3.bisect(sectionPos, pageYOffset - 10 - containerStart) // was -10
     i1 = Math.min(n - 1, i1)
     if (i != i1){
       sections.classed('gscroll-active', function(d, i){ return i === i1 })
       dispatch.active(i1)
       i = i1
-
-      if(i%3==0 || i==14) tracker('load', i);
-    }
-
-    var isFixed1 = pageYOffset > containerStart
-    if (isFixed != isFixed1){
-      isFixed = isFixed1
-
-      fixed.classed('gscroll-fixed', isFixed)
-      d3.select('#graph').style('margin-left',(isFixed)?'0px':'-140px')
-
-      //god awfull
-      setTimeout(function() { 
-        d3.select('#legend').style({
-          'opacity':(isFixed)?1:0,
-          'margin-left':(window.innerHeight<1050)?'-30px':'10px'
-        })
-        d3.select('#svg-container').classed('zoom',!isFixed)
-        d3.select('#steps').style('background-color',(isFixed && window.innerHeight<1050)?'rgba(255,255,255,.7)':'transparent')
-      },10)
 
     }
   }
@@ -73,7 +53,7 @@ function gscroll() {
 
   function keydown(forceDown) {
     //sorry for this
-    if(d3.select('.gscroll-active').classed('explore'))return
+    // if(d3.select('.gscroll-active').classed('explore'))return
 
     var delta;
     if (d3.event && !forceDown){
