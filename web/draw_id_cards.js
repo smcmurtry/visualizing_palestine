@@ -54,18 +54,20 @@ function draw_id_cards(card_width, colour, text_group, text_pop) {
 
   var text = d3.select('.id-card-div')
     .append('div')
-    .attr('class', 'id-text')
+    .attr('id', 'id-text')
     .style('left', text_left + 'px')
-    .style('top', photo_margin + 'px')
+    .style('top', -h + 'px')
     .style('width', (w/2) + 'px')
     .style('font-size', font_size + 'px')
     .html(text_group)
+
+  var text_h = +d3.select('#id-text').style('height').slice(0, -2);
 
   var population = d3.select('.id-card-div')
     .append('div')
     .attr('class', 'id-pop')
     .style('left', text_left + 'px')
-    .style('top', (photo_margin + photo_h - pop_font_size) + 'px')
+    .style('top', (-h - text_h + photo_margin/2 + photo_h - pop_font_size) + 'px')
     .style('width', (w/2) + 'px')
     .style('font-size', pop_font_size + 'px')
     .html(text_pop);

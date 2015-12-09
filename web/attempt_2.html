@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.js"></script>
+  <script src="gscroll.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.19/topojson.min.js"></script>
+  <script src="queue.js"></script>
+  <script src="draw_id_cards.js"></script>
+  <script src="draw_population_registry.js"></script>
+  <script src="draw_vote_box.js"></script>
+  <title>The Israeli ID System - Interactive</title>
+  <meta name="description" content="The Israeli ID System - Interactive">
+  <link rel="stylesheet" type="text/css" href="attempt_2.css"/>
+</head>
+
+<body>
+  <div id='main'>
+    <div id='intro'>
+        <div class='h1'>IDENTITY CRISIS</div>
+        <div class='h2'>THE ISRAELI ID SYSTEM</div>
+        <div class='intro-text'>
+          <div class='left'>
+            SINCE 1967, THE ISRAELI GOVERNMENT HAS BEEN THE DE-FACTO SOVEREIGN POWER IN CONTROL OF THE WHOLE OF HISTORIC PALESTINE, INCLUDING GAZA, THE WEST BANK, AND ISRAEL.
+          </div>
+          <div class='right'> ISRAELI AUTHORITIES CONTROL THE POPULATION REGISTRY AND ID SYSTEM, RESTRICTING WHERE PALESTINIANS CAN LIVE, THEIR ACCESS TO SERVICES AND THEIR PARTICIPATION IN THE POLITICAL SYSTEM.
+          </div>
+        </div>
+        <div id='pop_registry'></div>
+
+      <div id='h-pipe' class='pipe'></div>
+      <div id='v-pipe' class='pipe'></div>
+      <svg id='arrow'></svg>
+    </div>
+    <div id='b'>
+      <div class='id-card-div'></div>
+      <div class='vote-svg'></div>
+      <div id='map'></div>
+      <!-- <div id='c'></div> -->
+      <!-- <div id='d'></div> -->
+      <div id='v2-pipe' class='pipe'></div>
+    </div>
+    <div id='sections'>
+      <section class="step">
+        <span class='bold'>Free</span> to live throughout Israel and 60% of the occupied West Bank.
+      </section>
+      <section class="step">
+        <span class='bold'>Barred</span> from living in <span class='bold'>68%</span>  of all towns in Israel by admissions committees.
+      </section>
+      <section class="step">
+        Access to most areas, but <span class='bold'>ID may be revoked</span> if living outside of Jerusalem.
+      </section>
+      <section class="step">
+        <span class='bold'>Barred</span> from living in all but <span class='bold'>40%</span>  of West Bank due to Israeli settler and military presence.
+      </section>
+      <section class="step">
+        <span class='bold'>Barred</span> from living outside of Gaza since 2007.
+      </section>
+      <section class="step">
+        <span class='bold'>Barred</span> from returning to live anywhere in Israel or Palestinian territory.
+      </section>
+      <div class='extra-space'></div>
+    </div>
+  </div>
+</body>
+
+<script>
+
+var data_path = "../data/";
+
+queue()
+  .defer(d3.json, data_path + "background.json")
+  .defer(d3.json, data_path + "water.json")
+  .defer(d3.json, data_path + "map_1.json")
+  .defer(d3.json, data_path + "map_2.json")
+  .defer(d3.json, data_path + "map_3.json")
+  .defer(d3.json, data_path + "map_4.json")
+  .defer(d3.json, data_path + "map_5.json")
+  .await(ready);
+
+
+var id_colours = ['#3E8FAD', '#4CADCE', '#6DCFF6', '#83C774', '#74AD69', '#949599'];
+var group_text = ['JEWISH ISRAELI CITIZENS', 'PALESTINIAN CITIZENS OF ISRAEL',
+  'EAST JERUSALEM PALESTINIANS', 'WEST BANK PALESTINIANS', 'GAZA STRIP PALESTINIANS',
+  'PALESTINIAN EXILES'];
+var pop_text = ['5.9M', '1.3M', '0.3M', '2.3M', '1.6M', '5.7M'];
+var bk_colours = ['#EEF0EF', '#89D3DE', '#7CBFC8', '#6EAAB4', '#60959D', '#949599'];
+var card_width = 160;
+
+draw_population_registry(0, 0);
+draw_vote_box();
+draw_id_cards(card_width, id_colours[0], group_text[0], pop_text[0]);
+
+
+
+var body = d3.select('body');
+var intro = d3.select('#intro');
+var a = d3.select('#a');
+var b = d3.select('#b');
+var h_pipe = d3.select('#h-pipe');
+var v_pipe = d3.select('#v-pipe');
+var v2_pipe = d3.select('#v2-pipe');
+var arrow = d3.select('#arrow');
+var vote_svg = d3.select('.vote-svg');
+var map = d3.select('#map');
+var id_card_div = d3.select('.id-card-div');
+
+h_pipe.style('top', -200 + 'px')
+      .style('left', 500 + 'px');
+
+v_pipe.style('top', -200 + 'px')
+      .style('left', 700 + 'px');
+
+v2_pipe.style('top', -1150 + 'px')
+       .style('left', 400 + 'px');
+
+arrow.style('top', -1130 + 'px')
+      .style('left', 400 + 'px');
+
+map.style('top', -400 + 'px')
+      .style('left', 50 + 'px');
+
+id_card_div.style('height', card_width + 'px')
+
+arrow.append('polygon')
+    .attr('points', '20,100 100,170 100,30')
+    .attr('fill', 'lightgrey');
+
+vote_svg.style('top', -120 + 'px')
+        .style('left', 350 + 'px')
+
+var bp = +d3.select('body').style('margin-top').slice(0, -2)
+var h = +intro.style('height').slice(0, -2);
+var maps = [];
+var map_width = 300;
+var height = 600;
+var path = d3.geo.path().projection(null);
+
+var svg = d3.select("#map").append("svg")
+    .attr("width", map_width)
+    .attr("height", height)
+    .append("g");
+
+// var mb = +a.style('margin-bottom').slice(0, -2)
+
+var sticky_top = 50;
+var if_break = -h+sticky_top;
+
+// console.log(bp, h, mb)
+// console.log(b.getBoundingClientRect().top);
+
+d3.select(window).on('scroll', function() {
+  var intro_viewportOffset = intro.node().getBoundingClientRect();
+  var b_viewportOffset = b.node().getBoundingClientRect();
+
+  if (intro_viewportOffset.top <= if_break) {
+    b.style('position', 'fixed')
+      .style('top', (sticky_top) + 'px')
+      .style('left', b_viewportOffset.left + 'px')
+  } else {
+    b.style('position', 'static')
+  }
+
+})
+
+var gs = gscroll().container(d3.select('#sections'))
+
+gs(d3.selectAll('section.step'))
+
+function ready(error, background, water, map_1, map_2, map_3, map_4, map_5) {
+  if (error) throw error;
+
+  initialize_map();
+
+  function initialize_map() {
+    var _background = topojson.feature(background, background.objects.background);
+    var _water = topojson.feature(water, water.objects.water);
+
+    var map_vars = [map_1, map_2, map_3, map_4, map_5];
+    var map_fnames = ['map_1', 'map_2', 'map_3', 'map_4', 'map_5'];
+    for (var i = 0; i < map_vars.length; i++) {
+      var _map = topojson.feature(map_vars[i], map_vars[i].objects[map_fnames[i]]);
+      maps.push(_map)
+    };
+
+    svg.append("g")
+      .selectAll("path")
+        .data(_background.features)
+      .enter().append("path")
+        .attr("class", "riding")
+        .attr("d", path)
+        .attr("fill", '#DDDEE0');
+
+    svg.append("g")
+      .selectAll("path")
+        .data(_water.features)
+      .enter().append("path")
+        .attr("class", "riding")
+        .attr("d", path)
+        .attr("fill", '#89D3DE');
+
+    initialize_zoom();
+
+    function initialize_zoom() {
+      var b = path.bounds(_background),
+          s = .95 / Math.max((b[1][0] - b[0][0]) / map_width, (b[1][1] - b[0][1]) / height),
+          t = [(map_width - s * (b[1][0] + b[0][0])) / 2, (height - s * (b[1][1] + b[0][1]))/2 ];
+
+      svg.attr("transform", "translate(" + t + ")scale(" + s + ")");
+    }
+  }
+
+
+
+  gs.on('active', function(i){
+    draw_id_cards(card_width, id_colours[i], group_text[i], pop_text[i]);
+    console.log(i)
+    // body.style('background-color', bk_colours[i])
+    if (i < 2) {
+      v2_pipe.style('display', 'block');
+    } else {
+      v2_pipe.style('display', 'none');
+    }
+
+    d3.select('.access-layer').remove();
+
+    if (i < 5) {
+      svg.append("g")
+        .attr('class', 'access-layer')
+        .selectAll("path")
+        .data(maps[i].features)
+        .enter().append("path")
+        .attr("class", "riding")
+        .attr("d", path)
+        .attr("fill", id_colours[i])
+    }
+
+    if (i < 2) {
+      d3.select('.cross').style('display', 'none');
+    } else {
+      d3.select('.cross').style('display', 'block');
+    }
+
+    d3.selectAll('section.step')
+      .transition().duration(function(d, j){ return j == i ? 0 : 200 })
+        .style('opacity', function(d, j){
+          return j == i ? 1 : j == i + 1 ? .1 : .001 })
+  })
+}
+
+</script>
