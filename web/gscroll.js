@@ -52,7 +52,6 @@ function gscroll() {
 
 
   function keydown(forceDown) {
-    //sorry for this
 
     var delta;
     if (d3.event && !forceDown){
