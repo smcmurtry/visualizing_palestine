@@ -10,7 +10,7 @@
   <script src="draw_vote_box.js"></script>
   <title>The Israeli ID System - Interactive</title>
   <meta name="description" content="The Israeli ID System - Interactive">
-  <link rel="stylesheet" type="text/css" href="attempt_2.css"/>
+  <link rel="stylesheet" type="text/css" href="attempt_3.css"/>
 </head>
 
 <body>
@@ -27,39 +27,44 @@
         </div>
         <div id='pop_registry'></div>
 
-      <div id='h-pipe' class='pipe'></div>
-      <div id='v-pipe' class='pipe'></div>
-      <svg id='arrow'></svg>
+      <!-- <div id='h-pipe' class='pipe'></div> -->
+      <!-- <div id='v-pipe' class='pipe'></div> -->
+      <!-- <svg id='arrow'></svg> -->
     </div>
     <div id='b'>
       <div id='content'>
-        <div class='id-card-div'></div>
         <div class='vote-svg'></div>
         <div id='map'></div>
         <!-- <div id='c'></div> -->
         <!-- <div id='d'></div> -->
-        <div id='v2-pipe' class='pipe'></div>
+        <!-- <div id='v2-pipe' class='pipe'></div> -->
       </div>
-      <div id='legend'></div>
+      <!-- <div id='legend'></div> -->
 
     </div>
     <div id='sections'>
       <section class="step">
+        <div class='id-card-div' id='c1'></div>
         <span class='bold'>Free</span> to live throughout Israel and 60% of the occupied West Bank.
       </section>
       <section class="step">
+        <div class='id-card-div' id='c2'></div>
         <span class='bold'>Barred</span> from living in <span class='bold'>68%</span>  of all towns in Israel by admissions committees.
       </section>
       <section class="step">
+        <div class='id-card-div' id='c3'></div>
         Access to most areas, but <span class='bold'>ID may be revoked</span> if living outside of Jerusalem.
       </section>
       <section class="step">
+        <div class='id-card-div' id='c4'></div>
         <span class='bold'>Barred</span> from living in all but <span class='bold'>40%</span>  of West Bank due to Israeli settler and military presence.
       </section>
       <section class="step">
+        <div class='id-card-div' id='c5'></div>
         <span class='bold'>Barred</span> from living outside of Gaza since 2007.
       </section>
       <section class="step">
+        <div class='id-card-div' id='c6'></div>
         <span class='bold'>Barred</span> from returning to live anywhere in Israel or Palestinian territory.
       </section>
       <div class='extra-space'></div>
@@ -86,12 +91,17 @@ var group_text = ['JEWISH ISRAELI CITIZENS', 'PALESTINIAN CITIZENS OF ISRAEL',
   'EAST JERUSALEM PALESTINIANS', 'WEST BANK PALESTINIANS', 'GAZA STRIP PALESTINIANS',
   'PALESTINIAN EXILES'];
 var pop_text = ['5.9M', '1.3M', '0.3M', '2.3M', '1.6M', '5.7M'];
-var bk_colours = ['#EEF0EF', '#89D3DE', '#7CBFC8', '#6EAAB4', '#60959D', '#949599'];
 var card_width = 160;
 
-draw_population_registry(0, 0);
+draw_population_registry(240, 0);
 draw_vote_box();
-draw_id_cards(card_width, id_colours[0], group_text[0], pop_text[0]);
+
+draw_id_cards('#c1', card_width, id_colours[0], group_text[0], pop_text[0]);
+draw_id_cards('#c2', card_width, id_colours[1], group_text[1], pop_text[1]);
+draw_id_cards('#c3', card_width, id_colours[2], group_text[2], pop_text[2]);
+draw_id_cards('#c4', card_width, id_colours[3], group_text[3], pop_text[3]);
+draw_id_cards('#c5', card_width, id_colours[4], group_text[4], pop_text[4]);
+draw_id_cards('#c6', card_width, id_colours[5], group_text[5], pop_text[5]);
 
 var body = d3.select('body');
 var intro = d3.select('#intro');
@@ -103,7 +113,10 @@ var v2_pipe = d3.select('#v2-pipe');
 var arrow = d3.select('#arrow');
 var vote_svg = d3.select('.vote-svg');
 var map = d3.select('#map');
-var id_card_div = d3.select('.id-card-div');
+var id_card_div = d3.selectAll('.id-card-div');
+var sections = d3.selectAll('#sections');
+
+sections.style('width', card_width + 'px');
 
 h_pipe.style('top', -200 + 'px')
       .style('left', 500 + 'px');
@@ -117,24 +130,23 @@ v2_pipe.style('top', -1150 + 'px')
 arrow.style('top', -830 + 'px')
       .style('left', 400 + 'px');
 
-map.style('top', -400 + 'px')
+map.style('top', -150 + 'px')
       .style('left', 50 + 'px');
 
-id_card_div.style('height', card_width + 'px')
-  .style('top', 30 + 'px')
+id_card_div.style('margin-bottom', '5px')
 
 arrow.append('polygon')
     .attr('points', '20,100 100,170 100,30')
     .attr('fill', 'lightgrey');
 
-vote_svg.style('top', -180 + 'px')
-        .style('left', 320 + 'px')
+vote_svg.style('top', 180 + 'px')
+        .style('left', 50 + 'px')
 
 var bp = +d3.select('body').style('margin-top').slice(0, -2)
 var h = +intro.style('height').slice(0, -2);
 var maps = [];
 var map_width = 300;
-var height = 700;
+var height = 800;
 var sticky_top = 50;
 var if_break = -h+sticky_top;
 var path = d3.geo.path().projection(null);
@@ -205,9 +217,8 @@ function ready(error, background, water, map_1, map_2, map_3, map_4, map_5) {
   }
 
   gs.on('active', function(i){
-    draw_id_cards(card_width, id_colours[i], group_text[i], pop_text[i]);
+    // draw_id_cards(card_width, id_colours[i], group_text[i], pop_text[i]);
     console.log(i)
-    // body.style('background-color', bk_colours[i])
     if (i < 2) {
       v2_pipe.style('display', 'block');
     } else {
@@ -225,6 +236,9 @@ function ready(error, background, water, map_1, map_2, map_3, map_4, map_5) {
         .attr("class", "riding")
         .attr("d", path)
         .attr("fill", id_colours[i])
+        .on('mouseover', function() {
+          console.log('hi')
+        })
     }
 
     if (i < 2) {

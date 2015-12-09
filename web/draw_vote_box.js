@@ -1,16 +1,16 @@
 function draw_vote_box() {
 
-  var margin = 50,
-      box_len = 100,
-      font_size = 30,
-      x_size = 340,
-      ballot_h = 30,
-      ballot_w = 60,
+  var box_len = 60,
+      margin = 0.5*box_len,
+      font_size = 0.3*box_len,
+      x_size = 3.0*box_len,
+      ballot_h = 0.3*box_len,
+      ballot_w = 0.6*box_len,
       ballot_border = 2;
 
   var svg = d3.select('.vote-svg').append('svg')
-    .attr('width', 200)
-    .attr('height', 200)
+    .attr('width', 2*box_len)
+    .attr('height', 2*box_len)
 
   svg.append('g')
      .attr("transform", "translate(" + (margin + (box_len-ballot_w)/2) + "," + (margin-ballot_h+ballot_border/2) + ")")
@@ -45,7 +45,7 @@ function draw_vote_box() {
     .attr('font-size', x_size)
     .attr('text-anchor', 'middle')
     .attr('x', box_len/2)
-    .attr('y', box_len+15)
+    .attr('y', box_len+3)
     .attr('opacity', 0.9)
     .attr('font-family', 'Effra_Std_Rg, sans-serif')
     .text('x');

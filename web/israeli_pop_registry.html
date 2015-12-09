@@ -26,12 +26,12 @@ function draw_population_registry(left_margin_pop, top_margin_pop) {
   d3.select('.pop_registry').style('margin-left', left_margin_pop + 'px');
   d3.select('.pop_registry').style('margin-top', top_margin_pop + 'px');
 
-  var card_h = 150,
+  var house_h = 100,
+      house_w = 1.6*house_h,
+      card_h = 0.75*house_h,
       card_w = 1.6*card_h,
-      house_w = 320,
-      house_h = 200,
-      svg_w = 420,
-      svg_h = 380;
+      svg_h = 1.9*house_h,
+      svg_w = 2.1*house_h;
 
   var card_margin = {top: 0, left: 90},
       house_margin = {top: card_h, left: 50};

@@ -1,4 +1,4 @@
-function draw_id_cards(card_width, colour, text_group, text_pop) {
+function draw_id_cards(id, card_width, colour, text_group, text_pop) {
   var w = card_width,
       h = w/1.6,
       photo_margin = 0.05*w,
@@ -13,11 +13,14 @@ function draw_id_cards(card_width, colour, text_group, text_pop) {
       pop_font_size = 0.125*w,
       text_left = photo_margin + photo_w + text_margin;
 
-  d3.select('.id-card-div').selectAll('svg').remove();
-  d3.select('.id-card-div').selectAll('div').remove();
+  var selection = d3.select(id);
+  // selection.selectAll('svg').remove();
+  // selection.selectAll('div').remove();
 
-  var svg = d3.select('.id-card-div')
-      .append('svg')
+  selection.style("width", w + 'px')
+    .style("height", h + 'px');
+
+  var svg = selection.append('svg')
       .attr('class', 'id-card')
       .attr("width", w)
       .attr("height", h)
@@ -52,27 +55,25 @@ function draw_id_cards(card_width, colour, text_group, text_pop) {
     .attr('rx', shoulder_radius)
     .attr('ry', shoulder_radius);
 
-  var text = d3.select('.id-card-div')
-    .append('div')
-    .attr('id', 'id-text')
+  var text = selection.append('div')
+    .attr('class', 'id-text')
     .style('left', text_left + 'px')
     .style('top', -h + 'px')
     .style('width', (w/2) + 'px')
     .style('font-size', font_size + 'px')
     .html(text_group)
 
-  var text_h = +d3.select('#id-text').style('height').slice(0, -2);
+  var text_h = selection.select('.id-text').style('height').slice(0, -2);
 
-  var population = d3.select('.id-card-div')
-    .append('div')
+  var population = selection.append('div')
     .attr('class', 'id-pop')
     .style('left', text_left + 'px')
-    .style('top', (-h - text_h + photo_margin/2 + photo_h - pop_font_size) + 'px')
+    .style('top', (-h - text_h + 58) + 'px')
     .style('width', (w/2) + 'px')
     .style('font-size', pop_font_size + 'px')
     .html(text_pop);
 
-  d3.selectAll('.card').style('fill', colour);
-  d3.selectAll('.person').style('fill', colour);
+  selection.selectAll('.card').style('fill', colour);
+  selection.selectAll('.person').style('fill', colour);
 
 }

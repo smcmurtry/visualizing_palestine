@@ -3,15 +3,15 @@ function draw_population_registry(left_margin_pop, top_margin_pop) {
   d3.select('#pop_registry').style('margin-left', left_margin_pop + 'px');
   d3.select('#pop_registry').style('margin-top', top_margin_pop + 'px');
 
-  var card_h = 150,
+    var house_h = 150,
+      house_w = 1.6*house_h,
+      card_h = 0.75*house_h,
       card_w = 1.6*card_h,
-      house_w = 320,
-      house_h = 200,
-      svg_w = 420,
-      svg_h = 380;
+      svg_h = 1.9*house_h,
+      svg_w = 2.1*house_h;
 
-  var card_margin = {top: 0, left: 90},
-      house_margin = {top: card_h, left: 50};
+  var card_margin = {top: 0, left: 0.45*house_h},
+      house_margin = {top: card_h, left: 0.25*house_h};
 
   var photo_margin = 0.05*card_w,
       corner_radius = 0.05*card_w,
@@ -75,20 +75,20 @@ function draw_population_registry(left_margin_pop, top_margin_pop) {
     .attr('height', house_h)
     .attr('fill', '#3A3A3C')
     .attr('stroke', '#5B5B5D')
-    .attr('stroke-width', 10);
+    .attr('stroke-width', 0.05*house_h);
 
   g_house.append('rect')
     .attr('width', 1.1*house_w)
     .attr('height', 0.1*house_h)
-    .attr('y', house_h + 5)
+    .attr('y', house_h + 0.025*house_h)
     .attr('x', -0.05*house_w)
     .attr('fill', '#3A3A3C');
 
   g_house.append('polygon')
-    .attr('points', '160,-60 350,0 -30,0')
+    .attr('points', (house_w/2) + ',' +(-0.3*house_h) + ' ' + (house_w+30) + ',0 ' + (-30) + ',0')
     .attr('fill', '#3A3A3C')
     .attr('stroke', '#5B5B5D')
-    .attr('stroke-width', 10);
+    .attr('stroke-width', 0.05*house_h);
 
   function add_text(text, y) {
     g_house.append('text')
@@ -96,10 +96,11 @@ function draw_population_registry(left_margin_pop, top_margin_pop) {
       .attr('text-anchor', 'middle')
       .attr('x', house_w/2)
       .attr('y', y)
+      .attr('font-size', 0.2*house_h)
       .text(text);
   }
 
-  add_text('ISRAELI', 70);
-  add_text('POPULATION', 115);
-  add_text('REGISTRY', 160);
+  add_text('ISRAELI', 0.35*house_h);
+  add_text('POPULATION', 0.575*house_h);
+  add_text('REGISTRY', 0.8*house_h);
 }
