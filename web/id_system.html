@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.js"></script>
+  <script src="gscroll.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.19/topojson.min.js"></script>
+  <script src="queue.js"></script>
+  <script src="draw_id_cards.js"></script>
+  <script src="draw_vote_box.js"></script>
+  <title>The Israeli ID System - Interactive</title>
+  <meta name="description" content="The Israeli ID System - Interactive">
+  <link rel="stylesheet" type="text/css" href="id_system.css"/>
+</head>
+
+<body>
+  <div id='main'>
+    <div id='intro'>
+        <div class='h1'>IDENTITY CRISIS</div>
+        <div class='h2'>THE ISRAELI ID SYSTEM</div>
+        <div class='intro-text'>
+          <div class='left'>
+            SINCE 1967, THE ISRAELI GOVERNMENT HAS BEEN THE DE-FACTO SOVEREIGN POWER IN CONTROL OF THE WHOLE OF HISTORIC PALESTINE, INCLUDING GAZA, THE WEST BANK, AND ISRAEL.
+          </div>
+          <div class='right'> ISRAELI AUTHORITIES CONTROL THE POPULATION REGISTRY AND ID SYSTEM, RESTRICTING WHERE PALESTINIANS CAN LIVE, THEIR ACCESS TO SERVICES AND THEIR PARTICIPATION IN THE POLITICAL SYSTEM.
+          </div>
+        </div>
+    </div>
+    <div id='b'>
+      <div id='content'>
+        <div id='map'></div>
+      <div id='legend'>
+          <div class='legend-entry'>
+            <div class='can-live-rect'></div>
+            <div class='legend-text'>WHERE YOU CAN LIVE</div>
+          </div>
+          <div class='legend-entry'>
+            <div class='cant-live-rect'></div>
+            <div class='legend-text'>WHERE YOU CAN'T LIVE</div>
+          </div>
+          <div class='legend-entry'>
+            <img src='yes_vote.png'></img>
+            <div class='legend-text'>CAN VOTE IN ISRAELI PARLIAMENT</div>
+          </div>
+          <div class='legend-entry'>
+            <img src='no_vote.png'></img>
+            <div class='legend-text'>CAN'T VOTE IN ISRAELI PARLIAMENT</div>
+          </div>
+
+      </div>
+      </div>
+
+    </div>
+    <div id='sections'>
+      <section class="step">
+      <div class='title'>
+        <div class='id-card-div left' id='c1'></div>
+        <div class='vote-svg right yes'></div>
+      </div>
+          <span class='bold'>Free</span> to live throughout Israel and 60% of the occupied West Bank.
+      </section>
+      <section class="step">
+      <div class='title'>
+        <div class='id-card-div left' id='c2'></div>
+        <div class='vote-svg right yes'></div>
+      </div>
+        <span class='bold'>Barred</span> from living in <span class='bold'>68%</span>  of all towns in Israel by admissions committees.
+      </section>
+      <section class="step">
+      <div class='title'>
+        <div class='id-card-div left' id='c3'></div>
+        <div class='vote-svg right no'></div>
+      </div>
+        Access to most areas, but <span class='bold'>ID may be revoked</span> if living outside of Jerusalem.
+      </section>
+      <section class="step">
+      <div class='title'>
+        <div class='id-card-div left' id='c4'></div>
+        <div class='vote-svg right no'></div>
+      </div>
+        <span class='bold'>Barred</span> from living in all but <span class='bold'>40%</span>  of West Bank due to Israeli settler and military presence.
+      </section>
+      <section class="step">
+      <div class='title'>
+        <div class='id-card-div left' id='c5'></div>
+        <div class='vote-svg right no'></div>
+      </div>
+        <span class='bold'>Barred</span> from living outside of Gaza since 2007.
+      </section>
+      <section class="step">
+      <div class='title'>
+        <div class='id-card-div left' id='c6'></div>
+        <div class='vote-svg right no'></div>
+      </div>
+        <span class='bold'>Barred</span> from returning to live anywhere in Israel or Palestinian territory.
+      </section>
+      <div class='extra-space'></div>
+    </div>
+  </div>
+</body>
+
+<script>
+window.onresize = function(event) {
+  refresh();
+};
+
+document.addEventListener("orientationchange", refresh);
+
+function refresh() {
+  d3.selectAll('.id-card-div').selectAll('div').remove();
+  d3.selectAll('.id-card-div').selectAll('svg').remove();
+  d3.selectAll('.vote-svg').selectAll('svg').remove();
+  d3.selectAll('#map').selectAll('svg').remove();
+  on_resize();
+}
+
+
+function on_resize() {
+
+  d3.select(document.documentElement)
+      // .interrupt()
+    .transition()
+      .duration(700)
+      .tween("scroll", function() {
+        // var i = d3.interpolateNumber(pageYOffset, sectionPos[i1] + containerStart);
+        return function(t) { scrollTo(0, 0); };
+      })
+
+  var data_path = "../data/";
+
+  queue()
+    .defer(d3.json, data_path + "background.json")
+    .defer(d3.json, data_path + "water.json")
+    .defer(d3.json, data_path + "map_1.json")
+    .defer(d3.json, data_path + "map_2.json")
+    .defer(d3.json, data_path + "map_3.json")
+    .defer(d3.json, data_path + "map_4.json")
+    .defer(d3.json, data_path + "map_5.json")
+    .await(ready);
+
+  var id_colours = ['#3E8FAD', '#4CADCE', '#6DCFF6', '#83C774', '#74AD69', '#949599'];
+  var group_text = ['JEWISH ISRAELI CITIZENS', 'PALESTINIAN CITIZENS OF ISRAEL',
+    'EAST JERUSALEM PALESTINIANS', 'WEST BANK PALESTINIANS', 'GAZA STRIP PALESTINIANS',
+    'PALESTINIAN EXILES'];
+  var pop_text = ['5.9M', '1.3M', '0.3M', '2.3M', '1.6M', '5.7M'];
+  var card_width = 160;
+  var maps = [];
+  var sticky_top = 50;
+  var intro_h = 600;
+  var fixed_height = window.innerHeight-sticky_top;
+  var map_height = fixed_height;// - 120;//800;
+  var map_width = map_height*(285/820.23); //300;
+  var if_break = 52-intro_h;//-map_height+sticky_top;
+  var path = d3.geo.path().projection(null);
+  var vote_width = 120;
+
+  draw_vote_box();
+
+  draw_id_cards('#c1', card_width, id_colours[0], group_text[0], pop_text[0]);
+  draw_id_cards('#c2', card_width, id_colours[1], group_text[1], pop_text[1]);
+  draw_id_cards('#c3', card_width, id_colours[2], group_text[2], pop_text[2]);
+  draw_id_cards('#c4', card_width, id_colours[3], group_text[3], pop_text[3]);
+  draw_id_cards('#c5', card_width, id_colours[4], group_text[4], pop_text[4]);
+  draw_id_cards('#c6', card_width, id_colours[5], group_text[5], pop_text[5]);
+
+  var body = d3.select('body');
+  var intro = d3.select('#intro');
+  var a = d3.select('#a');
+  var b = d3.select('#b');
+  var h_pipe = d3.select('#h-pipe');
+  var v_pipe = d3.select('#v-pipe');
+  var v2_pipe = d3.select('#v2-pipe');
+  var arrow = d3.select('#arrow');
+  var vote_svg = d3.select('.vote-svg');
+  var map = d3.select('#map');
+  var id_card_div = d3.selectAll('.id-card-div');
+  var sections = d3.select('#sections');
+  var legend = d3.select('#legend');
+  var extra_space = d3.select('.extra-space');
+  var steps = d3.selectAll('.step');
+
+  steps.style('margin-bottom', (0.1*fixed_height) + 'px')
+
+  intro.style('height', intro_h + 'px');
+
+  extra_space.style('height', (0.7*fixed_height) + 'px')
+
+  sections.style('width', (card_width+vote_width) + 'px');
+
+  h_pipe.style('top', -200 + 'px')
+        .style('left', 500 + 'px');
+
+  v_pipe.style('top', -200 + 'px')
+        .style('left', 670 + 'px');
+
+  v2_pipe.style('top', -1150 + 'px')
+         .style('left', 370 + 'px');
+
+  arrow.style('top', -830 + 'px')
+        .style('left', 400 + 'px');
+
+  var map_offset = 500/2 - map_width/2;
+
+  map.style('top', -30 + 'px')
+        .style('left', map_offset + 'px');
+
+  id_card_div.style('margin-bottom', '5px')
+
+  arrow.append('polygon')
+      .attr('points', '20,100 100,170 100,30')
+      .attr('fill', 'lightgrey');
+
+  var bp = +d3.select('body').style('margin-top').slice(0, -2)
+  var h = +intro.style('height').slice(0, -2);
+
+
+  b.style('height', fixed_height + 'px')
+
+  map.style('width', map_width + 'px')
+    .style('height', map_height + 'px')
+
+  var auto_margin = +d3.select('#main').style('margin-left').slice(0, -2);
+  console.log(+d3.select('#main').style('margin-left').slice(0, -2))
+
+  legend.style('top', (fixed_height-120) + 'px')
+  legend.style('left', (auto_margin) + 'px')
+
+  var svg = map.append("svg")
+      .attr("width", map_width)
+      .attr("height", map_height)
+      .append("g");
+
+  d3.select(window).on('scroll', function() {
+    var intro_viewportOffset = intro.node().getBoundingClientRect();
+    var b_viewportOffset = b.node().getBoundingClientRect();
+    console.log(intro_viewportOffset.top)
+    if (intro_viewportOffset.top <= if_break) {
+      b.style('position', 'fixed')
+        .style('top', (sticky_top) + 'px')
+        .style('left', b_viewportOffset.left + 'px')
+      legend.style('display', 'block');
+    } else {
+      b.style('position', 'static')
+      legend.style('display', 'none');
+    }
+  })
+
+  var gs = gscroll().container(d3.select('#sections'))
+
+  gs(d3.selectAll('section.step'))
+
+  function ready(error, background, water, map_1, map_2, map_3, map_4, map_5) {
+    if (error) throw error;
+
+    initialize_map();
+
+    function initialize_map() {
+      var _background = topojson.feature(background, background.objects.background);
+      var _water = topojson.feature(water, water.objects.water);
+
+      var map_vars = [map_1, map_2, map_3, map_4, map_5];
+      var map_fnames = ['map_1', 'map_2', 'map_3', 'map_4', 'map_5'];
+      for (var i = 0; i < map_vars.length; i++) {
+        var _map = topojson.feature(map_vars[i], map_vars[i].objects[map_fnames[i]]);
+        maps.push(_map)
+      };
+
+      svg.append("g")
+        .selectAll("path")
+          .data(_background.features)
+        .enter().append("path")
+          .attr("class", "riding")
+          .attr("d", path)
+          .attr("fill", '#DDDEE0');
+
+      svg.append("g")
+        .selectAll("path")
+          .data(_water.features)
+        .enter().append("path")
+          .attr("class", "riding")
+          .attr("d", path)
+          .attr("fill", '#89D3DE');
+
+      initialize_zoom();
+
+      function initialize_zoom() {
+        var b = path.bounds(_background),
+            s = .95 / Math.max((b[1][0] - b[0][0]) / map_width, (b[1][1] - b[0][1]) / map_height),
+            t = [(map_width - s * (b[1][0] + b[0][0])) / 2, (map_height - s * (b[1][1] + b[0][1]))/2 ];
+
+        svg.attr("transform", "translate(" + t + ")scale(" + s + ")");
+      }
+    }
+
+    gs.on('active', function(i){
+      // console.log(i)
+      step_fn(i);
+      d3.select('.can-live-rect')
+        .style('background-color', id_colours[i]);
+    })
+
+    step_fn(0);
+    
+    function step_fn(i) {
+
+      if (i < 2) {
+        v2_pipe.style('display', 'block');
+      } else {
+        v2_pipe.style('display', 'none');
+      }
+
+      d3.select('.access-layer').remove();
+
+      if (i < 5) {
+        svg.append("g")
+          .attr('class', 'access-layer')
+          .selectAll("path")
+          .data(maps[i].features)
+          .enter().append("path")
+          .attr("class", "riding")
+          .attr("d", path)
+          .attr("fill", id_colours[i])
+      }
+
+      d3.selectAll('section.step')
+        .transition().duration(function(d, j){ return j == i ? 0 : 200 })
+          .style('opacity', function(d, j){
+            return j == i ? 1 : j == i + 1 ? .1 : .001 })
+    }
+
+  }
+}
+
+on_resize();
+
+</script>
