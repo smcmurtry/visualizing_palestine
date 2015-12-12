@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.js"></script>
   <script src="gscroll.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.19/topojson.min.js"></script>
@@ -18,37 +19,38 @@
         <div class='h1'>IDENTITY CRISIS</div>
         <div class='h2'>THE ISRAELI ID SYSTEM</div>
         <div class='intro-text'>
-          <div class='left'>
+          <!-- <div class='left'> -->
+          <p>
             SINCE 1967, THE ISRAELI GOVERNMENT HAS BEEN THE DE-FACTO SOVEREIGN POWER IN CONTROL OF THE WHOLE OF HISTORIC PALESTINE, INCLUDING GAZA, THE WEST BANK, AND ISRAEL.
-          </div>
-          <div class='right'> ISRAELI AUTHORITIES CONTROL THE POPULATION REGISTRY AND ID SYSTEM, RESTRICTING WHERE PALESTINIANS CAN LIVE, THEIR ACCESS TO SERVICES AND THEIR PARTICIPATION IN THE POLITICAL SYSTEM.
-          </div>
+          </p>
+          <!-- </div> -->
+          <!-- <div class='right'>  -->
+          <p>
+            ISRAELI AUTHORITIES CONTROL THE POPULATION REGISTRY AND ID SYSTEM, RESTRICTING WHERE PALESTINIANS CAN LIVE, THEIR ACCESS TO SERVICES AND THEIR PARTICIPATION IN THE POLITICAL SYSTEM.
+          </p>
+          <!-- </div> -->
         </div>
     </div>
-    <div id='b'>
-      <div id='content'>
-        <div id='map'></div>
+    <div id='content'>
+      <div id='map'></div>
       <div id='legend'>
-          <div class='legend-entry'>
-            <div class='can-live-rect'></div>
-            <div class='legend-text'>WHERE YOU CAN LIVE</div>
-          </div>
-          <div class='legend-entry'>
-            <div class='cant-live-rect'></div>
-            <div class='legend-text'>WHERE YOU CAN'T LIVE</div>
-          </div>
-          <div class='legend-entry'>
-            <img src='yes_vote.png'></img>
-            <div class='legend-text'>CAN VOTE IN ISRAELI PARLIAMENT</div>
-          </div>
-          <div class='legend-entry'>
-            <img src='no_vote.png'></img>
-            <div class='legend-text'>CAN'T VOTE IN ISRAELI PARLIAMENT</div>
-          </div>
-
+        <div class='legend-entry'>
+          <div class='can-live-rect'></div>
+          <div class='legend-text'>WHERE YOU CAN LIVE</div>
+        </div>
+        <div class='legend-entry'>
+          <div class='cant-live-rect'></div>
+          <div class='legend-text'>WHERE YOU CAN'T LIVE</div>
+        </div>
+        <div class='legend-entry'>
+          <img src='yes_vote.png'></img>
+          <div class='legend-text'>CAN VOTE IN ISRAELI PARLIAMENT</div>
+        </div>
+        <div class='legend-entry'>
+          <img src='no_vote.png'></img>
+          <div class='legend-text'>CAN'T VOTE IN ISRAELI PARLIAMENT</div>
+        </div>
       </div>
-      </div>
-
     </div>
     <div id='sections'>
       <section class="step">
@@ -99,6 +101,8 @@
 </body>
 
 <script>
+
+
 window.onresize = function(event) {
   refresh();
 };
@@ -121,7 +125,6 @@ function on_resize() {
     .transition()
       .duration(700)
       .tween("scroll", function() {
-        // var i = d3.interpolateNumber(pageYOffset, sectionPos[i1] + containerStart);
         return function(t) { scrollTo(0, 0); };
       })
 
@@ -145,11 +148,9 @@ function on_resize() {
   var card_width = 160;
   var maps = [];
   var sticky_top = 50;
-  var intro_h = 600;
   var fixed_height = window.innerHeight-sticky_top;
-  var map_height = fixed_height;// - 120;//800;
-  var map_width = map_height*(285/820.23); //300;
-  var if_break = 52-intro_h;//-map_height+sticky_top;
+  var map_height = fixed_height;
+  var map_width = map_height*(285/820.23);
   var path = d3.geo.path().projection(null);
   var vote_width = 120;
 
@@ -164,12 +165,7 @@ function on_resize() {
 
   var body = d3.select('body');
   var intro = d3.select('#intro');
-  var a = d3.select('#a');
-  var b = d3.select('#b');
-  var h_pipe = d3.select('#h-pipe');
-  var v_pipe = d3.select('#v-pipe');
-  var v2_pipe = d3.select('#v2-pipe');
-  var arrow = d3.select('#arrow');
+  var content = d3.select('#content');
   var vote_svg = d3.select('.vote-svg');
   var map = d3.select('#map');
   var id_card_div = d3.selectAll('.id-card-div');
@@ -178,48 +174,30 @@ function on_resize() {
   var extra_space = d3.select('.extra-space');
   var steps = d3.selectAll('.step');
 
-  steps.style('margin-bottom', (0.1*fixed_height) + 'px')
+  var intro_h = +intro.style('height').slice(0, -2);
+  var if_break = 52-intro_h;
 
-  intro.style('height', intro_h + 'px');
+  steps.style('margin-bottom', (0.1*fixed_height) + 'px')
 
   extra_space.style('height', (0.7*fixed_height) + 'px')
 
   sections.style('width', (card_width+vote_width) + 'px');
 
-  h_pipe.style('top', -200 + 'px')
-        .style('left', 500 + 'px');
-
-  v_pipe.style('top', -200 + 'px')
-        .style('left', 670 + 'px');
-
-  v2_pipe.style('top', -1150 + 'px')
-         .style('left', 370 + 'px');
-
-  arrow.style('top', -830 + 'px')
-        .style('left', 400 + 'px');
-
   var map_offset = 500/2 - map_width/2;
 
   map.style('top', -30 + 'px')
-        .style('left', map_offset + 'px');
+    .style('left', map_offset + 'px');
 
   id_card_div.style('margin-bottom', '5px')
 
-  arrow.append('polygon')
-      .attr('points', '20,100 100,170 100,30')
-      .attr('fill', 'lightgrey');
-
   var bp = +d3.select('body').style('margin-top').slice(0, -2)
-  var h = +intro.style('height').slice(0, -2);
 
-
-  b.style('height', fixed_height + 'px')
+  content.style('height', fixed_height + 'px')
 
   map.style('width', map_width + 'px')
     .style('height', map_height + 'px')
 
   var auto_margin = +d3.select('#main').style('margin-left').slice(0, -2);
-  console.log(+d3.select('#main').style('margin-left').slice(0, -2))
 
   legend.style('top', (fixed_height-120) + 'px')
   legend.style('left', (auto_margin) + 'px')
@@ -231,15 +209,15 @@ function on_resize() {
 
   d3.select(window).on('scroll', function() {
     var intro_viewportOffset = intro.node().getBoundingClientRect();
-    var b_viewportOffset = b.node().getBoundingClientRect();
-    console.log(intro_viewportOffset.top)
+    var content_viewportOffset = content.node().getBoundingClientRect();
+
     if (intro_viewportOffset.top <= if_break) {
-      b.style('position', 'fixed')
+      content.style('position', 'fixed')
         .style('top', (sticky_top) + 'px')
-        .style('left', b_viewportOffset.left + 'px')
+        .style('left', content_viewportOffset.left + 'px')
       legend.style('display', 'block');
     } else {
-      b.style('position', 'static')
+      content.style('position', 'static')
       legend.style('display', 'none');
     }
   })
@@ -301,12 +279,6 @@ function on_resize() {
     step_fn(0);
     
     function step_fn(i) {
-
-      if (i < 2) {
-        v2_pipe.style('display', 'block');
-      } else {
-        v2_pipe.style('display', 'none');
-      }
 
       d3.select('.access-layer').remove();
 
