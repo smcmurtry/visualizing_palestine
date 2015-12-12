@@ -18,38 +18,40 @@
     <div id='intro'>
         <div class='h1'>IDENTITY CRISIS</div>
         <div class='h2'>THE ISRAELI ID SYSTEM</div>
+        <!-- <h1 class='h1'>IDENTITY CRISIS</h1> -->
+        <!-- <h2 class='h2'>THE ISRAELI ID SYSTEM</h2> -->
         <div class='intro-text'>
           <!-- <div class='left'> -->
-          <p>
+          <p id='p1'>
             SINCE 1967, THE ISRAELI GOVERNMENT HAS BEEN THE DE-FACTO SOVEREIGN POWER IN CONTROL OF THE WHOLE OF HISTORIC PALESTINE, INCLUDING GAZA, THE WEST BANK, AND ISRAEL.
           </p>
           <!-- </div> -->
           <!-- <div class='right'>  -->
-          <p>
+          <p id ='p2'>
             ISRAELI AUTHORITIES CONTROL THE POPULATION REGISTRY AND ID SYSTEM, RESTRICTING WHERE PALESTINIANS CAN LIVE, THEIR ACCESS TO SERVICES AND THEIR PARTICIPATION IN THE POLITICAL SYSTEM.
           </p>
           <!-- </div> -->
         </div>
     </div>
     <div id='content'>
-      <div id='map'></div>
-      <div id='legend'>
-        <div class='legend-entry'>
-          <div class='can-live-rect'></div>
-          <div class='legend-text'>WHERE YOU CAN LIVE</div>
-        </div>
-        <div class='legend-entry'>
-          <div class='cant-live-rect'></div>
-          <div class='legend-text'>WHERE YOU CAN'T LIVE</div>
-        </div>
-        <div class='legend-entry'>
-          <img src='yes_vote.png'></img>
-          <div class='legend-text'>CAN VOTE IN ISRAELI PARLIAMENT</div>
-        </div>
-        <div class='legend-entry'>
-          <img src='no_vote.png'></img>
-          <div class='legend-text'>CAN'T VOTE IN ISRAELI PARLIAMENT</div>
-        </div>
+      <svg id='map'></svg>
+    </div>
+    <div id='legend'>
+      <div class='legend-entry'>
+        <div class='can-live-rect'></div>
+        <div class='legend-text'>WHERE YOU CAN LIVE</div>
+      </div>
+      <div class='legend-entry'>
+        <div class='cant-live-rect'></div>
+        <div class='legend-text'>WHERE YOU CAN'T LIVE</div>
+      </div>
+      <div class='legend-entry'>
+        <img src='yes_vote.png'></img>
+        <div class='legend-text'>CAN VOTE IN ISRAELI PARLIAMENT</div>
+      </div>
+      <div class='legend-entry'>
+        <img src='no_vote.png'></img>
+        <div class='legend-text'>CAN'T VOTE IN ISRAELI PARLIAMENT</div>
       </div>
     </div>
     <div id='sections'>
@@ -102,7 +104,6 @@
 
 <script>
 
-
 window.onresize = function(event) {
   refresh();
 };
@@ -113,7 +114,7 @@ function refresh() {
   d3.selectAll('.id-card-div').selectAll('div').remove();
   d3.selectAll('.id-card-div').selectAll('svg').remove();
   d3.selectAll('.vote-svg').selectAll('svg').remove();
-  d3.selectAll('#map').selectAll('svg').remove();
+  d3.select('#map').selectAll('g').remove();
   on_resize();
 }
 
@@ -140,6 +141,18 @@ function on_resize() {
     .defer(d3.json, data_path + "map_5.json")
     .await(ready);
 
+  var body = d3.select('body');
+  var main = d3.select('#main');
+  var intro = d3.select('#intro');
+  var content = d3.select('#content');
+  var vote_svg = d3.select('.vote-svg');
+  var map_svg = d3.select('#map');
+  var id_card_div = d3.selectAll('.id-card-div');
+  var sections = d3.select('#sections');
+  var legend = d3.select('#legend');
+  var extra_space = d3.select('.extra-space');
+  var steps = d3.selectAll('.step');
+
   var id_colours = ['#3E8FAD', '#4CADCE', '#6DCFF6', '#83C774', '#74AD69', '#949599'];
   var group_text = ['JEWISH ISRAELI CITIZENS', 'PALESTINIAN CITIZENS OF ISRAEL',
     'EAST JERUSALEM PALESTINIANS', 'WEST BANK PALESTINIANS', 'GAZA STRIP PALESTINIANS',
@@ -147,12 +160,32 @@ function on_resize() {
   var pop_text = ['5.9M', '1.3M', '0.3M', '2.3M', '1.6M', '5.7M'];
   var card_width = 160;
   var maps = [];
-  var sticky_top = 50;
-  var fixed_height = window.innerHeight-sticky_top;
-  var map_height = fixed_height;
-  var map_width = map_height*(285/820.23);
+  var map_width = window.innerHeight*(285/820.23);
   var path = d3.geo.path().projection(null);
   var vote_width = 120;
+  var map_offset = 500/2 - map_width/2;
+  var intro_h = +intro.style('height').slice(0, -2);
+  var if_break = 52-intro_h;
+
+  function set_main_width() {
+    var main_width;
+    var body_width = +body.style('width').slice(0, -2);
+    var min_main_width = 300,
+        max_main_width = 800;
+    if (body_width < min_main_width) {
+      main_width = min_main_width;
+    } else if (body_width > max_main_width) {
+      main_width = max_main_width;
+    } else {
+      main_width = body_width;
+    }
+    main.style('width', main_width + 'px');
+    return main_width;
+  }
+
+  var main_width = set_main_width();
+  var left_width = card_width;//+vote_width;
+  var right_width = main_width - left_width;
 
   draw_vote_box();
 
@@ -163,48 +196,28 @@ function on_resize() {
   draw_id_cards('#c5', card_width, id_colours[4], group_text[4], pop_text[4]);
   draw_id_cards('#c6', card_width, id_colours[5], group_text[5], pop_text[5]);
 
-  var body = d3.select('body');
-  var intro = d3.select('#intro');
-  var content = d3.select('#content');
-  var vote_svg = d3.select('.vote-svg');
-  var map = d3.select('#map');
-  var id_card_div = d3.selectAll('.id-card-div');
-  var sections = d3.select('#sections');
-  var legend = d3.select('#legend');
-  var extra_space = d3.select('.extra-space');
-  var steps = d3.selectAll('.step');
 
-  var intro_h = +intro.style('height').slice(0, -2);
-  var if_break = 52-intro_h;
+  steps.style('margin-bottom', (0.1*window.innerHeight) + 'px')
 
-  steps.style('margin-bottom', (0.1*fixed_height) + 'px')
+  extra_space.style('height', (0.7*window.innerHeight) + 'px')
 
-  extra_space.style('height', (0.7*fixed_height) + 'px')
+  sections.style('width', left_width + 'px');
 
-  sections.style('width', (card_width+vote_width) + 'px');
+  content.style('width', right_width + 'px')
+         .style('height', window.innerHeight + 'px');
 
-  var map_offset = 500/2 - map_width/2;
+  id_card_div.style('margin-bottom', '5px');
 
-  map.style('top', -30 + 'px')
-    .style('left', map_offset + 'px');
+  var bp = +body.style('margin-top').slice(0, -2)
 
-  id_card_div.style('margin-bottom', '5px')
+  var body_margin_left = +body.style('margin-left').slice(0, -2);
+  var main_margin_left = +main.style('margin-left').slice(0, -2);
+  
+  legend.style('bottom', body_margin_left + 'px')
+        .style('left', (body_margin_left+main_margin_left) + 'px');
 
-  var bp = +d3.select('body').style('margin-top').slice(0, -2)
-
-  content.style('height', fixed_height + 'px')
-
-  map.style('width', map_width + 'px')
-    .style('height', map_height + 'px')
-
-  var auto_margin = +d3.select('#main').style('margin-left').slice(0, -2);
-
-  legend.style('top', (fixed_height-120) + 'px')
-  legend.style('left', (auto_margin) + 'px')
-
-  var svg = map.append("svg")
-      .attr("width", map_width)
-      .attr("height", map_height)
+  var g = map_svg.attr("width", right_width)
+      .attr("height", window.innerHeight)
       .append("g");
 
   d3.select(window).on('scroll', function() {
@@ -213,18 +226,18 @@ function on_resize() {
 
     if (intro_viewportOffset.top <= if_break) {
       content.style('position', 'fixed')
-        .style('top', (sticky_top) + 'px')
+        .style('top', 0 + 'px')
         .style('left', content_viewportOffset.left + 'px')
       legend.style('display', 'block');
     } else {
-      content.style('position', 'static')
+      content.style('position', 'static');
       legend.style('display', 'none');
     }
   })
 
-  var gs = gscroll().container(d3.select('#sections'))
+  var gs = gscroll().container(sections);
 
-  gs(d3.selectAll('section.step'))
+  gs(d3.selectAll('section.step'));
 
   function ready(error, background, water, map_1, map_2, map_3, map_4, map_5) {
     if (error) throw error;
@@ -234,15 +247,15 @@ function on_resize() {
     function initialize_map() {
       var _background = topojson.feature(background, background.objects.background);
       var _water = topojson.feature(water, water.objects.water);
-
       var map_vars = [map_1, map_2, map_3, map_4, map_5];
       var map_fnames = ['map_1', 'map_2', 'map_3', 'map_4', 'map_5'];
+
       for (var i = 0; i < map_vars.length; i++) {
         var _map = topojson.feature(map_vars[i], map_vars[i].objects[map_fnames[i]]);
         maps.push(_map)
       };
 
-      svg.append("g")
+      g.append("g")
         .selectAll("path")
           .data(_background.features)
         .enter().append("path")
@@ -250,7 +263,7 @@ function on_resize() {
           .attr("d", path)
           .attr("fill", '#DDDEE0');
 
-      svg.append("g")
+      g.append("g")
         .selectAll("path")
           .data(_water.features)
         .enter().append("path")
@@ -262,15 +275,14 @@ function on_resize() {
 
       function initialize_zoom() {
         var b = path.bounds(_background),
-            s = .95 / Math.max((b[1][0] - b[0][0]) / map_width, (b[1][1] - b[0][1]) / map_height),
-            t = [(map_width - s * (b[1][0] + b[0][0])) / 2, (map_height - s * (b[1][1] + b[0][1]))/2 ];
+            s = .95 / Math.max((b[1][0] - b[0][0]) / right_width, (b[1][1] - b[0][1]) / window.innerHeight),
+            t = [(right_width - s * (b[1][0] + b[0][0])) / 2, (window.innerHeight - s * (b[1][1] + b[0][1]))/2 ];
 
-        svg.attr("transform", "translate(" + t + ")scale(" + s + ")");
+        g.attr("transform", "translate(" + t + ")scale(" + s + ")");
       }
     }
 
     gs.on('active', function(i){
-      // console.log(i)
       step_fn(i);
       d3.select('.can-live-rect')
         .style('background-color', id_colours[i]);
@@ -281,9 +293,8 @@ function on_resize() {
     function step_fn(i) {
 
       d3.select('.access-layer').remove();
-
       if (i < 5) {
-        svg.append("g")
+        g.append("g")
           .attr('class', 'access-layer')
           .selectAll("path")
           .data(maps[i].features)
@@ -292,13 +303,11 @@ function on_resize() {
           .attr("d", path)
           .attr("fill", id_colours[i])
       }
-
       d3.selectAll('section.step')
         .transition().duration(function(d, j){ return j == i ? 0 : 200 })
           .style('opacity', function(d, j){
             return j == i ? 1 : j == i + 1 ? .1 : .001 })
     }
-
   }
 }
 
