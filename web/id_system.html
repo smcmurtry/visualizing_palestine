@@ -182,6 +182,8 @@ function on_resize() {
   } else {
     main_width = body_width;
   }
+
+  var auto_margin = (body_width-main_width)/2;
   main.style('width', main_width + 'px');
 
   if (body_width>=500){
@@ -241,18 +243,18 @@ function on_resize() {
          .style('height', window.innerHeight + 'px');
 
   var bp = +body.style('margin-top').slice(0, -2);
-
+  body_width
   var body_margin_left = +body.style('margin-left').slice(0, -2);
-  var main_margin_left = +main.style('margin-left').slice(0, -2);
-  
+  // var main_margin_left = +main.style('margin-left').slice(0, -2);
+  // console.log(body_margin_left, main.style('margin-left'))
   legend.style('bottom', body_margin_left + 'px')
-        .style('left', (body_margin_left+main_margin_left) + 'px');
+        .style('left', auto_margin + 'px');
 
   var g = map_svg.attr("width", right_width)
       .attr("height", window.innerHeight)
       .append("g");
   var sections_mt = 10*em;
-  
+
   sections.style('margin-top', sections_mt + 'px');
 
   d3.select(window).on('scroll', function() {
