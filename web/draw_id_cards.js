@@ -12,10 +12,8 @@ function draw_id_cards(id, card_width, colour, text_group, text_pop) {
       font_size = 0.080*w,
       pop_font_size = 0.125*w,
       text_left = photo_margin + photo_w + text_margin;
-
+      
   var selection = d3.select(id);
-  // selection.selectAll('svg').remove();
-  // selection.selectAll('div').remove();
 
   selection.style("width", w + 'px')
     .style("height", h + 'px');
@@ -68,7 +66,7 @@ function draw_id_cards(id, card_width, colour, text_group, text_pop) {
   var population = selection.append('div')
     .attr('class', 'id-pop')
     .style('left', text_left + 'px')
-    .style('top', (-h - text_h + 58) + 'px')
+    .style('top', (-h-text_h+photo_h-pop_font_size) + 'px')
     .style('width', (w/2) + 'px')
     .style('font-size', pop_font_size + 'px')
     .html(text_pop);
