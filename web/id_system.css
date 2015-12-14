@@ -5,7 +5,6 @@
 
 body {
   font-family: Effra_Std_Rg, sans-serif;
-  font-size: 16px;
 }
 
 #main {
@@ -14,7 +13,7 @@ body {
 
 #intro {
   margin-top: 1em;
-  margin-bottom: 2em;  
+  margin-bottom: 5em;  
   width: 100%;
 }
 
@@ -22,7 +21,6 @@ body {
   width: 100%;
   font-family: Effra_Std_Bd, sans-serif;
   font-size: 1.25em;
-  margin-bottom: 5em;
 }
 
 #content {
@@ -123,7 +121,6 @@ body {
   width: 1.25em;
   margin-top: 0.5em;
   margin-left: 0.4em;
-  /*margin-left: 0.1875em;*/
 }
 
 .cant-live-rect { background-color: #DDDEE0; }
@@ -135,6 +132,7 @@ body {
   z-index: 100;
   font-size: 0.8em;
   width: 300px;
+  background-color: white;
 }
 
 .legend-entry {
@@ -145,8 +143,4 @@ body {
 .legend-text {
   padding-top: 0.6em;
   padding-left: 2.18em;
-}
-
-.background {
-  background-color: white;
 }
