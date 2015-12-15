@@ -105,11 +105,14 @@
 
 <script>
 
-window.onresize = function(event) {
-  refresh();
-};
+var window_w = window.innerWidth;
 
-document.addEventListener("orientationchange", refresh);
+window.onresize = function(event) {
+  if (window_w != window.innerWidth) {
+    window_w = window.innerWidth;
+    refresh();
+  }
+};
 
 function refresh() {
   d3.selectAll('.id-card-div').selectAll('div').remove();
