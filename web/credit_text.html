@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.js"></script>
+
+<style>
+
+@font-face { font-family: Effra_Std_Rg; src: url('../data/Effra-Font/Effra_Std_Rg.ttf'); }
+
+#credit-text {
+  margin: 0 auto;
+  font-family: Effra_Std_Rg;
+  font-size: 14px;
+  width: 400px;
+  height: 36px; /*100%;*/
+  /*background-color: lightblue;*/
+}
+
+.float-left {
+  float: left;
+  padding-right: 10px;
+}
+.float-right {
+  /*float: right;*/
+  /*background-color: lightgreen;*/
+  text-align: left;
+  width: 100%;
+  /*padding-left: 10px;*/
+}
+
+
+</style>
+
+<body>
+<div id='credit-text'>
+  <div class='float-left'>
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png" /></a>
+</div>
+
+<div class='float-right'>
+Based on <a href='http://visualizingpalestine.org/visuals/identity-crisis-the-israeli-id-system'>a graphic</a> by <a href='http://visualizingpalestine.org/'>Visualizing Palestine</a>. Adapted by <a href='http://stephenmcmurtry.org/'>Stephen McMurtry</a>.
+</div>
+</div>
+
+</body>
+<script>
+
+var tot_w = +d3.select('#credit-text').style('width').slice(0, -2);
+var tot_h = +d3.select('#credit-text').style('height').slice(0, -2);
+var cc_w = 98,
+    cc_h = 35;
+console.log(tot_w, cc_w)
+
+// d3.select('#credit-text .float-right')
+  // .style('width', (tot_w-cc_w) + 'px');
+
+var right_txt_h = +d3.select('#credit-text .float-right').style('height').slice(0, -2);
+
+d3.select('#credit-text .float-left')
+  .style('padding-top', (0.5*(tot_h-cc_h)) + 'px');
+
+console.log(tot_h, right_txt_h)
+
+d3.select('#credit-text .float-right')
+  .style('padding-top', (0.5*(tot_h-right_txt_h)) + 'px');
+
+</script>

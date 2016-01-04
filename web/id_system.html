@@ -18,19 +18,17 @@
     <div id='intro'>
         <div class='h1'>IDENTITY CRISIS</div>
         <div class='h2'>THE ISRAELI ID SYSTEM</div>
+        <div class='h3'>
+            Based on <a href='http://visualizingpalestine.org/visuals/identity-crisis-the-israeli-id-system'>a graphic</a> by <a href='http://visualizingpalestine.org/'>Visualizing Palestine</a>. Adapted by <a href='http://stephenmcmurtry.org/'>Stephen McMurtry</a>.
+        </div>
         <div class='intro-text'>
-       <!--    <p id='p1'>
-            SINCE 1967, THE ISRAELI GOVERNMENT HAS BEEN THE DE-FACTO SOVEREIGN POWER IN CONTROL OF THE WHOLE OF HISTORIC PALESTINE, INCLUDING GAZA, THE WEST BANK, AND ISRAEL.
-          </p> -->
           <p id='p1'>
             Since 1967, the Israeli Government has been the de-facto sovereign power in control of the whole of historic Palestine, including Gaza, the West Bank, and Israel.
           </p>
-<!--           <p id ='p2'>
-            ISRAELI AUTHORITIES CONTROL THE POPULATION REGISTRY AND ID SYSTEM, RESTRICTING WHERE PALESTINIANS CAN LIVE, THEIR ACCESS TO SERVICES AND THEIR PARTICIPATION IN THE POLITICAL SYSTEM.
-          </p> -->
           <p id ='p2'>
             Israeli authorities control the Population Registry and ID System, restricting where Palestinians can live, their access to services and their participation in the political system.
           </p>
+
         </div>
     </div>
     <div id='content'>
@@ -53,9 +51,12 @@
         <img src='no_vote.png'></img>
         <div class='legend-text'>CAN'T VOTE IN ISRAELI PARLIAMENT</div>
       </div>
-
     </div>
+
     <div id='sections'>
+      <section class="step scroll-button">
+        Scroll
+      </section>
       <section class="step">
       <div class='title'>
         <div class='id-card-div left' id='c1'></div>
@@ -205,10 +206,9 @@ function on_resize() {
     em = 10;
     legend_w = 150;
   }
+
   
   body.style('font-size', em + 'px');
-  d3.selectAll('img').style('height', (29*em/16) + 'px')
-    .style('width', 'auto');
 
   var left_width = card_width+vote_width;
   var right_width = main_width - left_width;
@@ -246,11 +246,9 @@ function on_resize() {
          .style('height', window.innerHeight + 'px');
 
   var bp = +body.style('margin-top').slice(0, -2);
-  body_width
   var body_margin_left = +body.style('margin-left').slice(0, -2);
-  // var main_margin_left = +main.style('margin-left').slice(0, -2);
-  // console.log(body_margin_left, main.style('margin-left'))
-  legend.style('bottom', body_margin_left + 'px')
+
+  legend.style('bottom', (body_margin_left+7) + 'px')
         .style('left', auto_margin + 'px');
 
   var g = map_svg.attr("width", right_width)
@@ -352,7 +350,5 @@ function on_resize() {
 }
 
 on_resize();
-
-
 
 </script>
