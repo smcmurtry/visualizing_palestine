@@ -21,7 +21,7 @@
         <div class='h1'>IDENTITY CRISIS</div>
         <div class='h2'>THE ISRAELI ID SYSTEM</div>
         <div class='h3'>
-            Based on <a href='http://visualizingpalestine.org/visuals/identity-crisis-the-israeli-id-system'>a graphic</a> by <a href='http://visualizingpalestine.org/'>Visualizing Palestine</a>. Adapted by <a href='http://stephenmcmurtry.org/'>Stephen McMurtry</a>.
+            By <a href='http://stephenmcmurtry.org/'>Stephen McMurtry</a> <br> Adapted with permission from a Creative Commons <a href='http://visualizingpalestine.org/visuals/identity-crisis-the-israeli-id-system'>infographic</a> by <a href='http://visualizingpalestine.org/'>Visualizing Palestine</a>
         </div>
         <div class='intro-text'>
           <p id='p1'>
@@ -109,7 +109,7 @@
 
 <script>
 
-var data_path = "../data/";
+var data_path = "../data/";// "dir_id_system/";
 var window_w = window.innerWidth;
 var body = d3.select('body');
 var main = d3.select('#main');
@@ -202,7 +202,7 @@ function ready(error, background, water, map_1, map_2, map_3, map_4, map_5) {
   } else if (body_width > max_main_width) {
     main_width = max_main_width;
   } else {
-    main_width = body_width;
+    main_width = body_width - 14;
   }
 
   var auto_margin = (body_width-main_width)/2;
@@ -266,7 +266,7 @@ function ready(error, background, water, map_1, map_2, map_3, map_4, map_5) {
   var body_margin_left = +body.style('margin-left').slice(0, -2);
 
   legend.style('bottom', (body_margin_left+7) + 'px')
-        .style('left', (auto_margin-7) + 'px');
+        .style('left', (auto_margin) + 'px');
 
   g = map_svg.attr("width", right_width)
       .attr("height", window.innerHeight)
@@ -372,7 +372,5 @@ function ready(error, background, water, map_1, map_2, map_3, map_4, map_5) {
     if (pg_load) { end_load(); }
   }
 }
-
-
 
 </script>

@@ -2,7 +2,6 @@
 @font-face { font-family: Effra_Std_Rg; src: url('../data/Effra-Font/Effra_Std_Rg.ttf'); }
 @font-face { font-family: Effra_Std_Bd; src: url('../data/Effra-Font/Effra_Std_Bd.ttf'); }
 @font-face { font-family: Effra_Std_He; src: url('../data/Effra-Font/Effra_Std_He.ttf'); }
-
 body {
   font-family: Effra_Std_Rg, sans-serif;
 }
@@ -76,7 +75,7 @@ body {
   text-align: center;
   color: #38383A;
   font-size: 1.25em;
-  line-height: 1em;
+  line-height: 1.25em;
   margin-bottom: 3em;
   opacity: 0.8;
 }
@@ -171,4 +170,9 @@ body {
   top: 0px;
   left: 0px;
   z-index: 1000000;
+}
+
+img {
+    height: 2em; /* you can use % */
+    width: auto;
 }

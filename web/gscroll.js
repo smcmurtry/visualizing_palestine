@@ -87,9 +87,9 @@ function gscroll() {
 
     var i1 = Math.max(0, Math.min(i + delta, n - 1))
 
-    console.log('pageYOffset: ' + pageYOffset)
-    console.log('sectionPos[i1]: ' + sectionPos[i1])
-    console.log('containerStart: ' + containerStart)
+    // console.log('pageYOffset: ' + pageYOffset)
+    // console.log('sectionPos[i1]: ' + sectionPos[i1])
+    // console.log('containerStart: ' + containerStart)
 
     d3.select(document.documentElement)
         .interrupt()
