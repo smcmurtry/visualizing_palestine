@@ -2,7 +2,7 @@
 function gscroll() {
   var windowHeight,
       dispatch = d3.dispatch("scroll", "active"),
-      sections = d3.select('null'),
+      _sections = d3.select('null'),
       i = NaN,
       sectionPos = [],
       n;
@@ -13,13 +13,18 @@ function gscroll() {
 
   //start emiting events on
   function rv(els){
-    sections = els
-    n = sections.size()
+    _sections = els
+    n = _sections.size()
 
     d3.select(window)
         .on("scroll.gscroll", reposition)
         .on('resize.gscroll', resize)
         .on('keydown.gscroll', keydown)
+
+    d3.select('#scroll-button')
+      .on('click', function(d) {
+        scroll_by(1);
+      })
 
     resize()
     d3.timer(function() {
@@ -33,7 +38,7 @@ function gscroll() {
     var i1 = d3.bisect(sectionPos, pageYOffset - 10 - containerStart) // was -10
     i1 = Math.min(n - 1, i1)
     if (i != i1){
-      sections.classed('gscroll-active', function(d, i){ return i === i1 })
+      _sections.classed('gscroll-active', function(d, i){ return i === i1 })
       dispatch.active(i1)
       i = i1
 
@@ -43,7 +48,7 @@ function gscroll() {
   function resize(){
     sectionPos = []
     var startPos
-    sections.each(function(d, i){
+    _sections.each(function(d, i){
       if (!i) startPos = this.getBoundingClientRect().top
       sectionPos.push(this.getBoundingClientRect().top -  startPos + 0) })
 
@@ -74,8 +79,18 @@ function gscroll() {
     }
     if (forceDown) delta = 1
 
+    scroll_by(delta);
+
+  }
+  
+  function scroll_by(delta) {
 
     var i1 = Math.max(0, Math.min(i + delta, n - 1))
+
+    console.log('pageYOffset: ' + pageYOffset)
+    console.log('sectionPos[i1]: ' + sectionPos[i1])
+    console.log('containerStart: ' + containerStart)
+
     d3.select(document.documentElement)
         .interrupt()
       .transition()
@@ -86,8 +101,8 @@ function gscroll() {
         })
 
     d3.event.preventDefault();
-  }
 
+  }
 
   rv.container = function(_x){
     if (!_x) return container

@@ -10,10 +10,12 @@
   <script src="draw_vote_box.js"></script>
   <title>The Israeli ID System - Interactive</title>
   <meta name="description" content="The Israeli ID System - Interactive">
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="id_system.css"/>
 </head>
 
 <body>
+  <div id='screen'></div>
   <div id='main'>
     <div id='intro'>
         <div class='h1'>IDENTITY CRISIS</div>
@@ -54,7 +56,8 @@
     </div>
 
     <div id='sections'>
-      <section class="step scroll-button">
+      <section class="step" id="scroll-button">
+        <span class="glyphicon glyphicon-chevron-down"></span>
         Scroll
       </section>
       <section class="step">
@@ -106,7 +109,27 @@
 
 <script>
 
+var data_path = "../data/";
 var window_w = window.innerWidth;
+var body = d3.select('body');
+var main = d3.select('#main');
+var intro = d3.select('#intro');
+var content = d3.select('#content');
+var vote_svg = d3.selectAll('.vote-svg');
+var map_svg = d3.select('#map');
+var id_card_div = d3.selectAll('.id-card-div');
+var sections = d3.select('#sections');
+var legend = d3.select('#legend');
+var extra_space = d3.select('.extra-space');
+var steps = d3.selectAll('.step');
+var title = d3.selectAll('.title');
+var background = d3.select('#background');
+
+var id_colours = ['#3E8FAD', '#4CADCE', '#6DCFF6', '#83C774', '#74AD69', '#949599'];
+var group_text = ['JEWISH ISRAELI CITIZENS', 'PALESTINIAN CITIZENS OF ISRAEL',
+  'EAST JERUSALEM PALESTINIANS', 'WEST BANK PALESTINIANS', 'GAZA STRIP PALESTINIANS',
+  'PALESTINIAN EXILES'];
+var pop_text = ['5.9M', '1.3M', '0.3M', '2.3M', '1.6M', '5.7M'];
 
 window.onresize = function(event) {
   if (window_w != window.innerWidth) {
@@ -115,6 +138,9 @@ window.onresize = function(event) {
   }
 };
 
+on_resize();
+
+
 function refresh() {
   d3.selectAll('.id-card-div').selectAll('div').remove();
   d3.selectAll('.id-card-div').selectAll('svg').remove();
@@ -122,7 +148,6 @@ function refresh() {
   d3.select('#map').selectAll('g').remove();
   on_resize();
 }
-
 
 function on_resize() {
 
@@ -133,9 +158,7 @@ function on_resize() {
       .tween("scroll", function() {
         return function(t) { scrollTo(0, 0); };
       })
-
-  var data_path = "../data/";
-
+  start_load();
   queue()
     .defer(d3.json, data_path + "background.json")
     .defer(d3.json, data_path + "water.json")
@@ -145,35 +168,30 @@ function on_resize() {
     .defer(d3.json, data_path + "map_4.json")
     .defer(d3.json, data_path + "map_5.json")
     .await(ready);
+}
 
-  var body = d3.select('body');
-  var main = d3.select('#main');
-  var intro = d3.select('#intro');
-  var content = d3.select('#content');
-  var vote_svg = d3.selectAll('.vote-svg');
-  var map_svg = d3.select('#map');
-  var id_card_div = d3.selectAll('.id-card-div');
-  var sections = d3.select('#sections');
-  var legend = d3.select('#legend');
-  var extra_space = d3.select('.extra-space');
-  var steps = d3.selectAll('.step');
-  var title = d3.selectAll('.title');
-  var background = d3.select('#background');
+function start_load() {
+  d3.select('#screen').style('z-index', '1000000');
+}
 
-  var id_colours = ['#3E8FAD', '#4CADCE', '#6DCFF6', '#83C774', '#74AD69', '#949599'];
-  var group_text = ['JEWISH ISRAELI CITIZENS', 'PALESTINIAN CITIZENS OF ISRAEL',
-    'EAST JERUSALEM PALESTINIANS', 'WEST BANK PALESTINIANS', 'GAZA STRIP PALESTINIANS',
-    'PALESTINIAN EXILES'];
-  var pop_text = ['5.9M', '1.3M', '0.3M', '2.3M', '1.6M', '5.7M'];
-  var maps = [];
+function end_load() {
+  d3.select('#screen').style('z-index', '-100000');
+
+}
+
+function ready(error, background, water, map_1, map_2, map_3, map_4, map_5) {
+  if (error) throw error;
+
   var map_width = window.innerHeight*(285/820.23);
-  var path = d3.geo.path().projection(null);
   var map_offset = 500/2 - map_width/2;
 
   var card_width;
   var vote_width;
   var em;
   var legend_w;
+  var g;
+  var maps = [];
+  var path = d3.geo.path().projection(null);
 
   var main_width;
   var body_width = +body.style('width').slice(0, -2);
@@ -207,7 +225,6 @@ function on_resize() {
     legend_w = 150;
   }
 
-  
   body.style('font-size', em + 'px');
 
   var left_width = card_width+vote_width;
@@ -249,106 +266,113 @@ function on_resize() {
   var body_margin_left = +body.style('margin-left').slice(0, -2);
 
   legend.style('bottom', (body_margin_left+7) + 'px')
-        .style('left', auto_margin + 'px');
+        .style('left', (auto_margin-7) + 'px');
 
-  var g = map_svg.attr("width", right_width)
+  g = map_svg.attr("width", right_width)
       .attr("height", window.innerHeight)
       .append("g");
   var sections_mt = 10*em;
 
   sections.style('margin-top', sections_mt + 'px');
 
-  d3.select(window).on('scroll', function() {
-    var content_viewportOffset = content.node().getBoundingClientRect();
-    var section_y = sections.node().getBoundingClientRect().top;
-    if (section_y <= sections_mt) {
-      content.style('position', 'fixed')
-        .style('top', 0 + 'px')
-        .style('left', content_viewportOffset.left + 'px')
-      legend.style('display', 'block');
-    } else {
-      content.style('position', 'static');
-      legend.style('display', 'none');
-    }
-  })
-
-
-  var gs = gscroll().container(sections);
-
-  gs(d3.selectAll('section.step'));
-
-  function ready(error, background, water, map_1, map_2, map_3, map_4, map_5) {
-    if (error) throw error;
-
-    initialize_map();
-
-    function initialize_map() {
-      var _background = topojson.feature(background, background.objects.background);
-      var _water = topojson.feature(water, water.objects.water);
-      var map_vars = [map_1, map_2, map_3, map_4, map_5];
-      var map_fnames = ['map_1', 'map_2', 'map_3', 'map_4', 'map_5'];
-
-      for (var i = 0; i < map_vars.length; i++) {
-        var _map = topojson.feature(map_vars[i], map_vars[i].objects[map_fnames[i]]);
-        maps.push(_map)
-      };
-
-      g.append("g")
-        .selectAll("path")
-          .data(_background.features)
-        .enter().append("path")
-          .attr("class", "riding")
-          .attr("d", path)
-          .attr("fill", '#DDDEE0');
-
-      g.append("g")
-        .selectAll("path")
-          .data(_water.features)
-        .enter().append("path")
-          .attr("class", "riding")
-          .attr("d", path)
-          .attr("fill", '#89D3DE');
-
-      initialize_zoom();
-
-      function initialize_zoom() {
-        var b = path.bounds(_background),
-            s = .95 / Math.max((b[1][0] - b[0][0]) / right_width, (b[1][1] - b[0][1]) / window.innerHeight),
-            t = [(right_width - s * (b[1][0] + b[0][0])) / 2, (window.innerHeight - s * (b[1][1] + b[0][1]))/2 ];
-
-        g.attr("transform", "translate(" + t + ")scale(" + s + ")");
-      }
-    }
-
-    gs.on('active', function(i){
-      step_fn(i);
-      d3.select('.can-live-rect')
-        .style('background-color', id_colours[i]);
+  d3.select('#scroll-button')
+    .on('mouseover', function(d) {
+      d3.select('#scroll-button').style('opacity', 0.5)
     })
+    .on('mouseout', function(d) {
+      d3.select('#scroll-button').style('opacity', 1)
+    });
 
-    step_fn(0);
-    
-    function step_fn(i) {
+  d3.select(window)
+    .on('scroll', function() {
+      var content_viewportOffset = content.node().getBoundingClientRect();
+      var section_y = sections.node().getBoundingClientRect().top;
 
-      d3.select('.access-layer').remove();
-      if (i < 5) {
-        g.append("g")
-          .attr('class', 'access-layer')
-          .selectAll("path")
-          .data(maps[i].features)
-          .enter().append("path")
-          .attr("class", "riding")
-          .attr("d", path)
-          .attr("fill", id_colours[i])
+      if (section_y <= sections_mt) {
+        content.style('position', 'fixed')
+          .style('top', 0 + 'px')
+          .style('left', content_viewportOffset.left + 'px');
+        legend.style('display', 'block');
+      } else {
+        content.style('position', 'static');
+        legend.style('display', 'none');
       }
-      d3.selectAll('section.step')
-        .transition().duration(function(d, j){ return j == i ? 0 : 200 })
-          .style('opacity', function(d, j){
-            return j == i ? 1 : j == i + 1 ? .1 : .001 })
+    });
+
+  initialize_map();
+  step_fn(0, true);
+
+  window.setTimeout(add_scroll, 300);
+
+  function add_scroll() {
+    var gs = gscroll().container(sections);
+    gs(d3.selectAll('section.step'));
+    gs.on('active', function(i) {
+      step_fn(i, false);
+      d3.select('.can-live-rect')
+        .style('background-color', id_colours[i-1]);
+    });
+  }
+
+  function initialize_map() {
+    var _background = topojson.feature(background, background.objects.background);
+    var _water = topojson.feature(water, water.objects.water);
+    var map_vars = [map_1, map_1, map_2, map_3, map_4, map_5];
+    var map_fnames = ['map_1', 'map_1', 'map_2', 'map_3', 'map_4', 'map_5'];
+
+    for (var i = 0; i < map_vars.length; i++) {
+      var _map = topojson.feature(map_vars[i], map_vars[i].objects[map_fnames[i]]);
+      maps.push(_map)
+    };
+
+    g.append("g")
+      .selectAll("path")
+        .data(_background.features)
+      .enter().append("path")
+        .attr("class", "riding")
+        .attr("d", path)
+        .attr("fill", '#DDDEE0');
+
+    g.append("g")
+      .selectAll("path")
+        .data(_water.features)
+      .enter().append("path")
+        .attr("class", "riding")
+        .attr("d", path)
+        .attr("fill", 'white');// '#89D3DE');
+
+    initialize_zoom();
+
+    function initialize_zoom() {
+      var b = path.bounds(_background),
+          s = .95 / Math.max((b[1][0] - b[0][0]) / right_width, (b[1][1] - b[0][1]) / window.innerHeight),
+          t = [(right_width - s * (b[1][0] + b[0][0])) / 2, (window.innerHeight - s * (b[1][1] + b[0][1]))/2 ];
+
+      g.attr("transform", "translate(" + t + ")scale(" + s + ")");
     }
+  }
+  function step_fn(i, pg_load) {
+
+    d3.select('.access-layer').remove();
+    if (i < 6 && i > 0) {
+      g.append("g")
+        .attr('class', 'access-layer')
+        .selectAll("path")
+        .data(maps[i].features)
+        .enter().append("path")
+        .attr("class", "riding")
+        .attr("d", path)
+        .attr("fill", id_colours[i-1])
+    }
+    d3.selectAll('section.step')
+      .transition().duration(function(d, j){ return j == i ? 0 : 200 })
+        .style('opacity', function(d, j) {
+          return j == i ? 1 : j == i + 1 ? .1 : .001 })
+
+    if (pg_load) { end_load(); }
   }
 }
 
-on_resize();
+
 
 </script>
