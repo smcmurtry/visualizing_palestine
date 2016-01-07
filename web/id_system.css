@@ -1,7 +1,7 @@
-@font-face { font-family: Effra_Std_Md; src: url('../data/Effra-Font/Effra_Std_Md.ttf'); }
-@font-face { font-family: Effra_Std_Rg; src: url('../data/Effra-Font/Effra_Std_Rg.ttf'); }
-@font-face { font-family: Effra_Std_Bd; src: url('../data/Effra-Font/Effra_Std_Bd.ttf'); }
-@font-face { font-family: Effra_Std_He; src: url('../data/Effra-Font/Effra_Std_He.ttf'); }
+@font-face { font-family: Effra_Std_Md; src: url('Effra-Font/Effra_Std_Md.ttf'); }
+@font-face { font-family: Effra_Std_Rg; src: url('Effra-Font/Effra_Std_Rg.ttf'); }
+@font-face { font-family: Effra_Std_Bd; src: url('Effra-Font/Effra_Std_Bd.ttf'); }
+@font-face { font-family: Effra_Std_He; src: url('Effra-Font/Effra_Std_He.ttf'); }
 
 body {
   font-family: Effra_Std_Rg, sans-serif;
