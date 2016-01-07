@@ -12,6 +12,16 @@
   <meta name="description" content="The Israeli ID System - Interactive">
   <link href="//netdna.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="id_system.css"/>
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-59457353-1', 'auto');
+    ga('send', 'pageview');
+
+  </script>
 </head>
 
 <body>
@@ -21,8 +31,20 @@
         <div class='h1'>IDENTITY CRISIS</div>
         <div class='h2'>THE ISRAELI ID SYSTEM</div>
         <div class='h3'>
-            By <a href='http://stephenmcmurtry.org/'>Stephen McMurtry</a> <br> Adapted with permission from a Creative Commons <a href='http://visualizingpalestine.org/visuals/identity-crisis-the-israeli-id-system'>infographic</a> by <a href='http://visualizingpalestine.org/'>Visualizing Palestine</a>
+          <div >By <a href='http://stephenmcmurtry.org/'>Stephen McMurtry</a></div>
+          <div>
+            Adapted with permission from a Creative Commons <a href='http://visualizingpalestine.org/visuals/identity-crisis-the-israeli-id-system'>infographic</a> by <a href='http://visualizingpalestine.org/'>Visualizing Palestine</a>
+          </div>
+          <div id='license'>
+            <a href='http://creativecommons.org/licenses/by-nc-sa/4.0/'>           
+              <div class='image' id='cc'></div>
+              <div class='image' id='by'></div>
+              <div class='image' id='nc'></div>
+              <div class='image' id='sa'></div>
+            </a>
+          </div>
         </div>
+
         <div class='intro-text'>
           <p id='p1'>
             Since 1967, the Israeli Government has been the de-facto sovereign power in control of the whole of historic Palestine, including Gaza, the West Bank, and Israel.
@@ -109,7 +131,7 @@
 
 <script>
 
-var data_path = "../data/";// "dir_id_system/";
+var data_path = "../data/"; // "dir_id_system/";
 var window_w = window.innerWidth;
 var body = d3.select('body');
 var main = d3.select('#main');
@@ -160,10 +182,10 @@ function on_resize() {
       })
   start_load();
   queue()
-    .defer(d3.json, data_path + "background.json")
+    .defer(d3.json, data_path + "background_w_water.json")
     .defer(d3.json, data_path + "water.json")
     .defer(d3.json, data_path + "map_1.json")
-    .defer(d3.json, data_path + "map_2.json")
+    .defer(d3.json, data_path + "map_2_corr.json")
     .defer(d3.json, data_path + "map_3.json")
     .defer(d3.json, data_path + "map_4.json")
     .defer(d3.json, data_path + "map_5.json")
@@ -315,10 +337,10 @@ function ready(error, background, water, map_1, map_2, map_3, map_4, map_5) {
   }
 
   function initialize_map() {
-    var _background = topojson.feature(background, background.objects.background);
+    var _background = topojson.feature(background, background.objects.background_w_water);
     var _water = topojson.feature(water, water.objects.water);
     var map_vars = [map_1, map_1, map_2, map_3, map_4, map_5];
-    var map_fnames = ['map_1', 'map_1', 'map_2', 'map_3', 'map_4', 'map_5'];
+    var map_fnames = ['map_1', 'map_1', 'map_2_corr', 'map_3', 'map_4', 'map_5'];
 
     for (var i = 0; i < map_vars.length; i++) {
       var _map = topojson.feature(map_vars[i], map_vars[i].objects[map_fnames[i]]);
@@ -333,13 +355,14 @@ function ready(error, background, water, map_1, map_2, map_3, map_4, map_5) {
         .attr("d", path)
         .attr("fill", '#DDDEE0');
 
-    g.append("g")
-      .selectAll("path")
-        .data(_water.features)
-      .enter().append("path")
-        .attr("class", "riding")
-        .attr("d", path)
-        .attr("fill", 'white');// '#89D3DE');
+    // g.append("g")
+    //   .selectAll("path")
+    //     .data(_water.features)
+    //   .enter().append("path")
+    //     .attr("class", "riding")
+    //     .attr("d", path)
+    //     .style('opacity', 0.5)
+    //     .attr("fill", '#DDDEE0');// '#DDDEE0');// 'white');// '#89D3DE');
 
     initialize_zoom();
 
